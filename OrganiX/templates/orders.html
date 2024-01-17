@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Đơn hàng{% endblock %}
+{% block content %}
+{% load static %}
+{% load cart %}
+{% load custom_filter %}
+{% load order %}
+{% load tz %}
+<link rel="stylesheet" href="{% static 'css/custom/order.css' %}">
+<div class="container">
+
+    <section class="section-conten padding-y bg">
+        <div class="container">
+            <div class="row">
+                <aside class="col-md-3" style="margin-top: 3%;">
+                    <ul class="list-group" id="filter">
+                        <a class="list-group-item active" href="{% url 'orders' %}"> Tất cả đơn hàng </a>
+                        <a class="list-group-item" href="orders?status=Đang chờ"> Đang chờ </a>
+                        <a class="list-group-item" href="orders?status=Đang giao hàng"> Đang giao hàng </a>
+                        <a class="list-group-item" href="orders?status=Hoàn thành"> Hoàn thành </a>
+                        <a class="list-group-item" href="orders?status=Đã hủy"> Đã hủy </a>
+                    </ul>
+                    <br>
+                </aside>
+
+                <main class="col-md-9" style="margin-top: 3%;">
+                    {% for order in orders %}
+                    <article class="card">
+                        <header class="card-header">
+                            <strong class="d-inline-block mr-3">Mã đơn hàng: {{order.tracking_no}}</strong>
+                            <span>Ngày đặt: {{order.created_at|localtime|order_date}}</span>
+                            {% if order.status == 'Hoàn thành' %}
+                            <span class='text-success float-right'><strong>{{order.status}}</strong></span>
+                            {% elif order.status == 'Đã hủy' %}
+                            <span class='text-danger float-right'><strong>{{order.status}}</strong></span>
+                            {% else %}
+                            <span class='text-warning float-right'><strong>{{order.status}}</strong></span>
+                            {% endif %}
+                        </header>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="text-muted">Giao đến</h6>
+                                    <p>{{order.name}} <br>
+                                        SĐT: {{order.phone}}<br>
+                                        Địa chỉ: {{order.address}} <br>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted">Phương thức thanh toán</h6>
+                                    <span class="">
+                                        {% if order.payment_method == 'momo' %}
+                                        <img src="static/image/momo_icon_square_pinkbg@3x.png" width="18px"> Ví điện tử
+                                        MoMo
+                                        {% endif %}
+                                        {% if order.payment_method == 'cod' %}
+                                        <i class="fa-solid fa-truck"></i> Trả tiền khi nhận hàng
+                                        {% endif %}
+                                    </span>
+                                    <p>
+                                        <br>
+                                        <span class="b"><strong>Tổng thanh toán: {{order.total_price|currency}}
+                                            </strong></span>
+                                    </p>
+                                </div>
+                            </div> <!-- row.// -->
+                        </div> <!-- card-body .// -->
+                        <div class="table-responsive">
+
+                            <table class="table table-hover">
+                                {% for item in order.orderItems %}
+                                <tr>
+                                    <td>
+                                        <img src="{{item.product.image.url}}" class="img-xs border" width="65">
+                                    </td>
+                                    <td>
+                                        <p class="title mb-0">{{item.product.name}} </p>
+                                        <var
+                                            class="price text-muted">{{item.product.sale_price|currency}}x{{item.quantity}}</var>
+                                    </td>
+                                    <td>Tổng tiền<br>{{item.sub_total|currency}}</td>
+                                    <td>
+                                        {% if item.order.status == 'Hoàn thành' %}
+                                        <a href="#" class="btn btn-outline-primary rating-btn" data-toggle="modal"
+                                            data-target="#reviewModal{{item.product.id}}">Đánh giá</a>
+                                        {% else %}
+                                        <button href="#" class="btn btn-outline-primary rating-btn" disabled>Đánh
+                                            giá</button>
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'product_detail' item.product.category.slug item.product.slug %}"
+                                            class="btn btn-light">Xem sản phẩm</a> </td>
+
+                                </tr>
+                                {% if item.order.status == 'Hoàn thành' %}
+                                <div class="modal fade" id="reviewModal{{item.product.id}}" tabindex="-1" role="dialog"
+                                    aria-labelledby="reviewModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">
+                                                    Đánh giá sản phẩm
+                                                </h5>
+                                                <hr>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="m-2 p-3">
+                                                    <form
+                                                        action="{% url 'submit_review' item.order.id item.product.id %}"
+                                                        method="POST">
+                                                        {% csrf_token %}
+                                                        <h5>Đánh giá sản phẩm {{item.product.name}}</h5>
+                                                        <div>
+                                                            <label>Chất lượng sản phẩm:</label>
+                                                            <br>
+                                                            <div class="star-rating star-5">
+                                                                <input type="radio" name="rating" value="1"
+                                                                    required /><i></i>
+                                                                <input type="radio" name="rating" value="2"
+                                                                    required /><i></i>
+                                                                <input type="radio" name="rating" value="3"
+                                                                    required /><i></i>
+                                                                <input type="radio" name="rating" value="4"
+                                                                    required /><i></i>
+                                                                <input type="radio" name="rating" value="5"
+                                                                    required /><i></i>
+
+                                                            </div>
+                                                            <br>
+                                                            Tiêu đề:
+                                                            <input type="text" class="form-control" name="subject"
+                                                                placeholder="Tiêu đề của đánh giá">
+                                                            <br>
+                                                            Đánh giá:
+                                                            <textarea name="review" rows="4" class="form-control"
+                                                                placeholder="Chia sẻ của bạn về sản phẩm này"></textarea>
+                                                            <br>
+                                                            <input type="submit" value="Gửi đánh giá"
+                                                                class="btn btn-primary">
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+
+                            </table>
+
+                        </div> <!-- table-responsive .end// -->
+                        <div class="card-footer">
+                            {% if order.status == 'Đang chờ' %}
+                            <input type="hidden" id="canceled_order_id" value="">
+                            <button href="#" class="float-right btn btn-outline-danger cancel_order_btn"
+                                onclick="document.getElementById('canceled_order_id').value=this.value;"
+                                value="{{order.tracking_no}}">Hủy đơn hàng</button>
+                            {% else %}
+                            <button href="#" class="float-right btn btn-outline-danger" disabled="">Hủy đơn
+                                hàng</button>
+                            {% endif %}
+                        </div>
+                    </article> <!-- order-group.// -->
+                    <br><br>
+                    {% endfor %}
+                </main>
+
+            </div> <!-- row.// -->
+        </div>
+
+
+    </section>
+
+
+
+    {% endblock content %}
+
+    {% block javascript %}
+    <script>
+        $(document).ready(function () {
+            cancel_order_btn = document.querySelectorAll('.cancel_order_btn');
+            cancel_order_btn.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    alertify.confirm('Hủy đơn hàng', 'Bạn chắc chắn muốn hủy đơn hàng?', function () {
+                        var order_id = document.getElementById('canceled_order_id').value;
+                        var token = $('input[name=csrfmiddlewaretoken]').val()
+                        $.ajax({
+                            method: 'POST',
+                            url: "{% url 'orders' %}",
+                            data:{
+                                'order_id': order_id,
+                                csrfmiddlewaretoken: token
+                            },
+                            success: function(response){
+                                if(response.error){
+                                    alertify.error('Đã xảy ra lỗi')
+                                }
+                                else{
+                                    window.location.replace("{% url 'orders' %}")
+                                }
+                                
+                            }
+                        })
+                    },
+                    function(){
+
+                    });
+                })
+            })
+        })
+
+    </script>
+    {% endblock javascript %}

@@ -1,0 +1,142 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block nav-global %}
+<a href="/admin/store/order">Xem thông tin đơn hàng</a>
+{% endblock nav-global %}
+{% block content %}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const chart = Highcharts.chart('container-chart', {
+    chart: {
+        type: 'pie'
+    },
+    title: {
+        text: 'Thống kê đơn hàng dựa theo trạng thái'
+    },
+    tooltip: {
+        valueSuffix: '%'
+    },
+    subtitle: {
+        
+    },
+    plotOptions: {
+        series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: [{
+                enabled: true,
+                distance: 20
+            }, {
+                enabled: true,
+                distance: -40,
+                format: '{point.percentage:.1f}%',
+                style: {
+                    fontSize: '1.2em',
+                    textOutline: 'none',
+                    opacity: 0.7
+                },
+                filter: {
+                    operator: '>',
+                    property: 'percentage',
+                    value: 5
+                }
+            }]
+        }
+    },
+    series: [
+        {
+            name: 'Tỉ lệ',
+            colorByPoint: true,
+            
+            data: [
+                {
+                    name: '{{status.0}}',
+                    y: {{percentage.0}}
+                },
+                {
+                    name: '{{status.2}}',
+                    y: {{percentage.2}}
+                },
+                {
+                    name: '{{status.1}}',
+                    sliced: true,
+                    selected: true,
+                    y: {{percentage.1}}
+                },
+            ]
+        }
+    ]
+        }
+    )
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Highcharts.chart('container-chart2', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Thống kê lợi nhuận 3 tháng gần nhất',
+        align: 'right'
+    },
+    xAxis: {
+        categories: ['{{month_list.0}}', '{{month_list.1}}', '{{month_list.2}}']
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'VNĐ'
+        },
+        stackLabels: {
+            enabled: true
+        }
+    },
+    legend: {
+        align: 'left',
+        x: 70,
+        verticalAlign: 'top',
+        y: 70,
+        floating: true,
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y} VNĐ<br/>Doanh thu: {point.stackTotal} VNĐ'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    series: [{
+        name: 'Lợi nhuận',
+        data: [ {{profit_list.0}}, {{profit_list.1}}, {{profit_list.2}}]
+    }, {
+        name: 'Chi phí',
+        data: [ {{cost_list.0}}, {{cost_list.1}}, {{cost_list.2}}]
+    }]
+});
+    });
+</script>
+
+
+    <div id="container-chart" style="width:70%; height:400px; margin:0 auto;">
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div id="container-chart2" style="width:70%; height:400px; margin:0 auto;">
+    </div>
+
+{% endblock content %}

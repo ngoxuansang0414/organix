@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% block title %}{{product.name}}{% endblock %}
+{% block content %}
+{% load custom_filter %}
+{% load order %}
+{% load tz %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/custom/product_detail.css' %}">
+<!-- content -->
+<div class="container">
+  <div class="row gx-5 product_data mt-4">
+    <aside class="col-lg-6">
+      <div class="border rounded-4 mb-3 d-flex justify-content-center">
+        <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="{{product.image.url}}">
+          <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit"
+            src="{{product.image.url}}" />
+        </a>
+      </div>
+    </aside>
+    <div class="col-lg-6">
+      <div class="ps-lg-3">
+        <h4 class="title text-dark ">
+          {{product.name}}
+        </h4>
+        <div class="d-flex flex-row my-3">
+          <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>{{ordered_quantity}} đã bán</span>
+          <hr>
+          {% if product.stock > 0 %}
+          <label class="badge bg-success">Còn hàng</label>
+          {% else %}
+          <label class="badge bg-danger">Hết hàng</label>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <span class="h5">{{product.sale_price|currency }}</span>
+          <span class="text-muted">/{{product.unit}}</span>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <!-- Accordion -->
+            <div id="accordionExample" class="accordion shadow">
+
+              <!-- Accordion item 1 -->
+              <div class="card">
+                <div id="headingOne" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseOne"
+                      aria-expanded="false" aria-controls="collapseOne"
+                      class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Chứng nhận/Canh
+                      tác</a></h6>
+                </div>
+                <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.certification}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accordion item 2 -->
+              <div class="card">
+                <div id="headingTwo" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseTwo"
+                      aria-expanded="false" aria-controls="collapseTwo"
+                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Xuất
+                      xứ</a></h6>
+                </div>
+                <div id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.origin}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accordion item 3 -->
+              <div class="card">
+                <div id="headingThree" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseThree"
+                      aria-expanded="false" aria-controls="collapseThree"
+                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Công
+                      dụng</a></h6>
+                </div>
+                <div id="collapseThree" aria-labelledby="headingThree" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.uses}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accordion item 4 -->
+              <div class="card">
+                <div id="headingFour" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseFour"
+                      aria-expanded="false" aria-controls="collapseFour"
+                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hướng
+                      dẫn sử dụng</a></h6>
+                </div>
+                <div id="collapseFour" aria-labelledby="headingFour" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.instructions_for_use}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accordion item 5 -->
+              <div class="card">
+                <div id="headingFive" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseFive"
+                      aria-expanded="false" aria-controls="collapseFive"
+                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hướng
+                      dẫn bảo quản</a></h6>
+                </div>
+                <div id="collapseFive" aria-labelledby="headingFive" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.preserving_instruction}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accordion item 6 -->
+              <div class="card">
+                <div id="headingSix" class="card-header bg-white shadow-sm border-0">
+                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseSix"
+                      aria-expanded="false" aria-controls="collapseSix"
+                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hạn sử
+                      dụng</a></h6>
+                </div>
+                <div id="collapseSix" aria-labelledby="headingSix" data-parent="#accordionExample" class="collapse">
+                  <div class="card-body p-5">
+                    <p class="font-weight-light m-0">{{description.expiry}}</p>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row mb-4 ">
+        <!-- col.// -->
+        <div class="col-md-4 col-6 mb-3 ">
+          <label class="mb-2 d-block">Số lượng</label>
+          <div class="input-group mb-3" style="width: 170px;">
+            {% csrf_token %}
+            <input type="hidden" value="{{ product.id }}" id="prod_id">
+            <button class="btn btn-white border border-secondary px-3 decrement-btn" type="button" id="decrement-btn"
+              data-mdb-ripple-color="dark">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <input type="text" class="form-control text-center border border-secondary" id="qty-input" value="1">
+            <button class="btn btn-white border border-secondary px-3 increment-btn" type="button" id="increment-btn"
+              data-mdb-ripple-color="dark">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <label class="text-muted">{{ product.stock }} sản phẩm có sẵn</label>
+        </div>
+      </div>
+      {% if user.is_authenticated %}
+      <a class="btn btn-primary shadow-0" id="addToCart-btn"> <i class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ
+      </a>
+      {% else %}
+      <button onclick="location.href='{% url 'login' %}'" class="btn btn-primary shadow-0"> <i
+          class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ
+      </button>
+      {% endif %}
+    </div>
+
+
+
+  </div>
+  <br>
+  <hr>
+  <header class="section-heading">
+    <h2>Đánh giá về sản phẩm</h2>
+  </header>
+  <br>
+
+</div>
+</div>
+{% for review in reviews %}
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+
+        <div class="col-md-12">
+          <p>
+            <p class="date text-muted float-md-right">{{ review.updated_at|localtime|order_date }}</p>
+            <h5><strong>{{ review.user.name }}</strong></h5>
+            
+          </p>
+          <p>
+            <span class="float-left">{% if review.rating >= 1 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
+            <span class="float-left">{% if review.rating >= 2 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
+            <span class="float-left">{% if review.rating >= 3 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
+            <span class="float-left">{% if review.rating >= 4 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
+            <span class="float-left">{% if review.rating >= 5 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
+          </p>
+          <br>
+          <p>
+            <h6 class="float-left" href="#"><strong>{{ review.subject }}</strong></h6>
+            
+          </p>
+          
+          <div class="clearfix"></div>
+          <p>{{ review.review }}</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#increment-btn').click(function (e) {
+      e.preventDefault();
+
+      var inc_value = $(this).closest('.product_data').find('#qty-input').val();
+      var value = parseInt(inc_value, 10);
+      value = isNaN(value) ? 0 : value;
+      if (value < '{{product.stock}}') {
+        value++;
+        $(this).closest('.product_data').find('#qty-input').val(value);
+      }
+    });
+
+    $('#decrement-btn').click(function (e) {
+      e.preventDefault();
+
+      var dec_value = $(this).closest('.product_data').find('#qty-input').val();
+      var value = parseInt(dec_value, 10);
+      value = isNaN(value) ? 0 : value;
+      if (value > 1) {
+        value--;
+        $(this).closest('.product_data').find('#qty-input').val(value);
+      }
+    });
+
+    $('#addToCart-btn').click(function (e) {
+      e.preventDefault();
+
+      var product_id = $(this).closest('.product_data').find('#prod_id').val();
+      var product_qty = $(this).closest('.product_data').find('#qty-input').val();
+      var token = $('input[name=csrfmiddlewaretoken]').val();
+
+      $.ajax({
+        method: 'POST',
+        url: "{% url 'cart' %}",
+        data: {
+          'product_id': product_id,
+          'product_qty': product_qty,
+          'add-to-cart': 1,
+          csrfmiddlewaretoken: token
+        },
+        success: function (response) {
+          console.log(response.status);
+          alertify.success(response.status);
+        },
+        error: function () {
+          alertify.error('Có lỗi xảy ra!')
+        }
+      })
+    });
+
+  });
+
+
+</script>
+{% endblock javascript %}

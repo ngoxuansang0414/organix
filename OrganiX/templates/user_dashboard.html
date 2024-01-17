@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Thông tin tài khoản{% endblock %}
+{% block content %}
+{% comment %} Address selector {% endcomment %}
+<script src="{% static '/js/address_selector.js' %}" defer></script>
+<div class="container user-data">
+  <div class="main-body">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="main-breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'profile' %}">Thông tin tài khoản</a>
+        </li>
+      </ol>
+    </nav>
+    <!-- /Breadcrumb -->
+    <div class="row gutters-sm ">
+      <div class="col-md-4 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center text-center">
+              <img src="{% static '/image/avatar.jpg' %}" alt="Admin" class="rounded-circle"
+                width="150">
+              <div class="mt-3">
+                <h4>{{user.name}}</h4>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#changePasswordModal">Đổi mật
+                  khẩu</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div class="card-body">
+            <form action="">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Email</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  <input style="border: none;" type="text" name="email" id="" class="col-sm-9 text-secondary"
+                    value="{{user.email}}" disabled>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Họ và Tên</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  <input style="border: none;" type="text" name="name" id="editable" class="col-sm-9 text-secondary"
+                    placeholder="Tên người dùng" value="{{user.name}}" required disabled>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Số điện thoại</h6>
+                </div>
+                <div class="col-sm-9 text-secondary">
+                  <input style="border: none;" type="text" name="phone" id="editable" class="col-sm-9 text-secondary"
+                    placeholder="Số điện thoại" value="{{user.phone}}" required disabled>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Giới tính</h6>
+                </div>
+                <div class="col-sm-4 text-secondary ">
+                  <select name="gender" id="editable" class="form-select form-control gender-selector" required disabled>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Không xác định">Không xác định</option>
+                  </select>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <h6 class="mb-0">Địa chỉ</h6>
+                </div>
+                <div class="col-sm-4 text-secondary">
+                  <p id="address">{{address}}</p>
+                  <input type="text" name="specific_address" id="specific_address" class="form-control"
+                    placeholder="Địa chỉ cụ thể" required hidden>
+                  <div id="cities">
+                    <select class="form-select form-control" name='city' id="cities-data-box" required hidden>
+                      <option value="0">Chọn tỉnh thành</option>
+                    </select>
+                  </div>
+
+                  <div id="districts">
+                    <select class="form-select form-control" name='district' id="districts-data-box" required hidden>
+                      <option value="0">Chọn quận huyện</option>
+                    </select>
+                  </div>
+
+                  <div id="wards">
+                    <select class="form-select form-control" name='ward' id="wards-data-box" required hidden>
+                      <option value="0">Chọn phường xã</option>
+                    </select>
+                  </div>
+
+                </div>
+              </div>
+              <hr>
+            </form>
+            <div class="row">
+              <div class="col-sm-12">
+                <button class="btn btn-info edit-btn" id="">Chỉnh sửa</button>
+                <button class="btn btn-info save-btn" id="">Lưu lại</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModal">
+          Đổi mật khẩu
+        </h5>
+        <hr>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="m-2 p-3">
+          <form id="change_password">
+            {% csrf_token %}
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Mật khẩu hiện tại" id="old_password" required>
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Mật khẩu mới" id="password" required>
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Xác nhận mật khẩu" id="confirm_password"
+                required>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-block"> Xác nhận </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+
+<script>
+  $(document).ready(function () {
+    $(document).on('click', '.save-btn', function (e) {
+      e.preventDefault();
+
+      var email = document.getElementsByName('email')[0].value;
+      var name = document.getElementsByName('name')[0].value;
+      var phone = document.getElementsByName('phone')[0].value;
+      var gender = document.getElementsByName('gender')[0].value;
+      var specific_address = document.getElementsByName('specific_address')[0].value;
+      var ward = document.getElementsByName('ward')[0].value;
+      var district = document.getElementsByName('district')[0].value;
+      var city = document.getElementsByName('city')[0].value;
+      var token = $('input[name=csrfmiddlewaretoken]').val();
+
+      $.ajax({
+        method: 'POST',
+        url: "{% url 'profile' %}",
+        data: {
+          'email': email,
+          'name': name,
+          'phone': phone,
+          'gender': gender,
+          'specific_address': specific_address,
+          'ward': ward,
+          'district': district,
+          'city': city,
+          csrfmiddlewaretoken: token
+        },
+        success: function (response) {
+          alertify.success(response);
+          setTimeout(function () {
+            window.location.replace("{% url 'profile' %}")
+          }, 1000);
+
+
+        },
+        error: function () {
+          alertify.error('Không được để trống thông tin')
+        }
+      })
+    });
+
+
+    $(document).on('click', '.edit-btn', function () {
+
+      $('[id=editable]').prop('disabled', false);
+      $('#specific_address').prop('hidden', false);
+      $('#wards-data-box').prop('hidden', false);
+      $('#districts-data-box').prop('hidden', false);
+      $('#cities-data-box').prop('hidden', false);
+      $('#address').prop('hidden', true);
+    });
+
+
+
+  })
+
+
+
+  $(document).on('submit', '#change_password', function (e) {
+    e.preventDefault();
+
+    $.ajax({
+      method: 'POST',
+      url: "{% url 'change_password' %}",
+      data: {
+        old_password: $('#old_password').val(),
+        password: $('#password').val(),
+        confirm_password: $('#confirm_password').val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function (data) {
+        if (data.status == true) {
+          alertify.success(data.msg);
+          setTimeout(function () {
+            $.ajax({
+              type: "GET",
+              url: "{% url 'logout' %}"
+            });
+            window.location.replace("{% url 'login' %}")
+
+          }, 2000);
+        }
+        else {
+          alertify.error(data)
+        }
+
+      },
+      error: function (data) {
+        alertify.error(data)
+      }
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    //gender selector
+    $('.gender-selector').val('{{user.gender}}');
+  })
+</script>
+
+{% endblock javascript %}

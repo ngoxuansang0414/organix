@@ -1,0 +1,63 @@
+body {
+    min-height: 100vh;
+
+}
+
+.imagebox h2{
+	text-shadow:
+	-1px -1px 0 #000,
+	0   -1px 0 #000,
+	1px -1px 0 #000,
+	1px  0   0 #000,
+	1px  1px 0 #000,
+	0    1px 0 #000,
+	-1px  1px 0 #000,
+	-1px  0   0 #000;
+}
+
+.imageselect .imagebox {
+    position: relative
+}
+
+.imageselect .imagebox figure {
+    position: relative;
+    overflow: hidden
+}
+
+.imageselect .imagebox figcaption {
+    background: rgba(89, 89, 89, 0.8);
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding: 30px;
+
+
+}
+
+.imageselect .imagebox .caption-title {
+    margin-bottom: 0;
+    color: #fff
+}
+
+.imageselect .imagebox .price {
+    color: #fdb714
+}
+
+.imageselect .imagebox:hover figcaption {
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0)
+}
+
+.price {
+    color: #f0715f;
+    font-size: 1.6667em;
+    text-transform: uppercase;
+    float: right;
+    text-align: right;
+    line-height: 1;
+    display: block
+}

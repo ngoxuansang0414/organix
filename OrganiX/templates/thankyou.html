@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load custom_filter %}
+{% block content %}
+<head>
+	<link rel="stylesheet" href="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/default_thank_you.css">
+	<script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/jquery-1.9.1.min.js"></script>
+	<script src="https://2-22-4-dot-lead-pages.appspot.com/static/lp918/min/html5shiv.js"></script>
+  <style>
+    a:hover{
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+{% if resultCode == None or resultCode == '0' %}
+<header class="site-header" id="header">
+		<h1 class="site-header__title" data-lead-id="site-header-title">THÀNH CÔNG!</h1>
+	</header>
+
+	<div class="main-content">
+		<i class="fa fa-check main-content__checkmark" id="checkmark"></i>
+		<p class="main-content__body" data-lead-id="main-content-body">Đơn hàng của bạn đã được đặt thành công. Bạn có thể kiểm tra lại đơn hàng của mình trong phần <a href="{% url 'orders' %}">đơn mua</a></p>
+	</div>
+
+	<footer class="site-footer" id="footer">
+		<a href="{% url 'homepage' %}" class="site-footer__fineprint" id="fineprint">TRỞ VỀ TRANG CHỦ</a>
+	</footer>
+{% elif resultCode == '1006' %}
+<header class="site-header" id="header">
+		<h1 class="site-header__title" data-lead-id="site-header-title">THẤT BẠI!</h1>
+	</header>
+
+	<div class="main-content">
+		<i class="fa fa-exclamation-triangle main-content__checkmark" id="checkmark" style="color: red;"></i>
+		<p class="main-content__body" data-lead-id="main-content-body">Đặt hàng thất bại do bạn đã hủy thanh toán</p>
+	</div>
+
+	<footer class="site-footer" id="footer">
+		<a href="{% url 'homepage' %}" class="site-footer__fineprint" id="fineprint">TRỞ VỀ TRANG CHỦ</a>
+	</footer>
+
+{% else %}
+
+<header class="site-header" id="header">
+  <h1 class="site-header__title" data-lead-id="site-header-title">THẤT BẠI!</h1>
+</header>
+
+<div class="main-content">
+  <i class="fa fa-exclamation-triangle main-content__checkmark" id="checkmark" style="color: red;"></i>
+  <p class="main-content__body" data-lead-id="main-content-body">Đặt hàng thất bại. Có lỗi xảy ra</p>
+</div>
+
+<footer class="site-footer" id="footer">
+  <a href="{% url 'homepage' %}" class="site-footer__fineprint" id="fineprint">TRỞ VỀ TRANG CHỦ</a>
+</footer>
+{% endif %}
+  
+
+
+{% endblock content %}

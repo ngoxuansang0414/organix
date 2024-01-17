@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{category_name}}{% endblock %}
+{% block content %}
+
+{% load cart %}
+{% load custom_filter %}
+{% load static %}
+<!-- body -->
+<link rel="stylesheet" href="{% static 'css/custom/product.css' %}">
+<div class="container py-5">
+	<div class="row">
+		<div class="col-lg-11 mx-auto">
+			<!-- FIRST EXAMPLE ===================================-->
+
+		
+
+		{% for product in products %}
+		<figure class="snip1527 ">
+			<div class="image shadow">
+				<img src="{{product.image.url}}" width="310px"
+				height="300px" alt="pr-sample23" /></div>
+			<figcaption>
+				<h3>{{product.name}}</h3>
+				<p>{{product.sale_price|currency}}<strong> / {{product.unit}}</strong></p>
+			</figcaption>
+			<a href="{% url 'product_detail' product.category.slug product.slug %}"></a>
+		</figure>
+		
+		{% endfor %}
+
+		
+		</div>
+	</div>
+</div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+	const forms = document.querySelectorAll('#addtocart');
+	forms.forEach(form => {
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			const input = event.target.querySelector('input');
+			const value = input.value;
+
+			$.ajax({
+				type: 'POST',
+				url: "/",
+				data: {
+					product: value,
+					csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+				},
+				success: function (data) {
+					$('.badge').html(data)
+				}
+
+			});
+		});
+	});
+
+</script>
+{% endblock javascript %}

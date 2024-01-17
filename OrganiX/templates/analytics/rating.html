@@ -1,0 +1,89 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block nav-global %}
+<a href="/admin/store/reviewrating">Xem thông tin đánh giá</a>
+{% endblock nav-global %}
+{% block content %}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const chart = Highcharts.chart('container-chart', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Thống kê lượng đánh giá theo số sao',
+        align: 'left'
+    },
+    xAxis: {
+        categories: ['Đánh giá'],
+        title: {
+            text: null
+        },
+        gridLineWidth: 1,
+        lineWidth: 0
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Số lượng (lượt đánh giá)',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        },
+        gridLineWidth: 0
+    },
+    tooltip: {
+        valueSuffix: ' Đánh giá'
+    },
+    plotOptions: {
+        bar: {
+            borderRadius: '50%',
+            dataLabels: {
+                enabled: true
+            },
+            groupPadding: 0.1
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: '1 Sao',
+        data: [{{rating_data.0}}]
+    }, {
+        name: '2 Sao',
+        data: [{{rating_data.1}}]
+    }, {
+        name: '3 Sao',
+        data: [{{rating_data.2}}]
+    },{
+        name: '4 Sao',
+        data: [{{rating_data.3}}]
+    },{
+        name: '5 Sao',
+        data: [{{rating_data.4}}]
+    }]
+});
+    });
+</script>
+
+
+    <div id="container-chart" style="width:70%; height:400px; margin:0 auto;">
+    </div>
+
+
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<style>
+.login,
+.image {
+  min-height: 100vh;
+}
+
+.bg-image {
+  background-image: url('{% static "/image/organiktarim-1162x700.jpg" %}');
+  background-size: cover;
+  background-position: center center;
+}
+</style>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <!-- The image half -->
+        <div class="col-md-6 d-none d-md-flex bg-image image"></div>
+
+
+        <!-- The content half -->
+        <div class="col-md-6 bg-light">
+            <div class=" d-flex align-items-center py-5 login">
+
+                <!-- Demo content-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-xl-7 mx-auto ">
+                            <h3 class="display-4">Đăng nhập</h3>
+                            <br>
+                            <form id="login">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <input id="email" type="email" placeholder="Địa chỉ email" required="required"
+                                        autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input id="password" type="password" placeholder="Mật khẩu" required="required"
+                                        class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                </div>
+                                <button type="submit"
+                                    class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Đăng nhập
+                                </button>
+                                <a href="{% url 'sendEmailReset' %}" style="text-decoration: none;">Quên mật khẩu</a>
+                               
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+    $(document).on('submit', '#login', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'login' %}",
+            data: {
+                email: $('#email').val(),
+                password: $('#password').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (data) {
+                if (data == 'Đăng nhập thành công') {
+                    alertify.success(data);
+                    setTimeout(function () {
+                        window.location.replace("{% url 'homepage' %}")
+                    }, 2000);
+                }
+                else {
+                    alertify.error(data)
+                }
+            },
+            error: function (data) {
+                alertify.error('Có lỗi xảy ra!')
+            }
+        });
+    });
+</script>
+{% endblock javascript %}

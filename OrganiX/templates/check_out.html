@@ -1,0 +1,348 @@
+{% extends 'base.html' %}
+{% block title %}Đặt hàng{% endblock %}
+{% load static %}
+{% block content %}
+{% load custom_filter %}
+
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css"
+    integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="../static/css/checkout.css">
+{% comment %} Address selector {% endcomment %}
+<script src="{% static '/js/address_selector.js' %}" defer></script>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-xl-7">
+
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        {% csrf_token %}
+                        <ol class="activity-checkout mb-0 px-4 mt-3">
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                        <i class="bx bxs-receipt text-white font-size-20"></i>
+                                    </div>
+                                </div>
+                                <div class="feed-item-list">
+                                    <div>
+                                        <h5 class="font-size-16 mb-1">Thông tin vận chuyển</h5>
+                                        <br>
+                                        <div class="mb-3">
+
+                                            <div>
+                                                <input type="hidden" id="get_infor_type" name="get_infor_type"
+                                                    value="" />
+                                                <div>
+
+                                                    <input type="radio" id="defaultInfo" name="infor_type"
+                                                        value="defaultInfo"
+                                                        onclick="document.getElementById('get_infor_type').value=this.value;
+                                                                $('#defaultInfo_area').prop('hidden', false);
+                                                                $('#manualInfo_area').prop('hidden', true);">
+                                                    <label for="defaultInfo">Sử dụng thông tin mặc định</label>
+                                                    <div id="defaultInfo_area" hidden>
+                                                        <textarea class="form-control" rows="4" readonly>
+Tên người nhận: {{user.name}}
+Số điện thoại: {{user.phone}}
+Địa chỉ: {{address}}                                                                 
+                                                        </textarea>
+                                                    </div>
+                                                    <br>
+
+                                                    <input type="radio" id="manualInfo" name="infor_type"
+                                                        value="manualInfo"
+                                                        onclick="document.getElementById('get_infor_type').value=this.value;
+                                                                $('#defaultInfo_area').prop('hidden', true);
+                                                                $('#manualInfo_area').prop('hidden', false);">
+                                                    <label for="manualInfo">Nhập thông tin</label>
+                                                </div>
+                                                <div>
+                                                    
+                                                </div>
+                                                <div id="manualInfo_area" hidden>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-name">Họ và
+                                                                    tên</label>
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Họ tên người nhận" name="name"
+                                                                    required />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-5">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="billing-phone">Số điện
+                                                                    thoại</label>
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Số điện thoại người nhận" name="phone"
+                                                                    required />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-4 mb-lg-0" id="cities">
+                                                                <label class="form-label">Tỉnh/TP</label>
+                                                                <select class="form-control form-select"
+                                                                    id="cities-data-box" name="city">
+                                                                    <option value="0">Chọn tỉnh thành</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-4 mb-lg-0" id="districts">
+                                                                <label class="form-label"
+                                                                    for="billing-city">Quận/Huyện</label>
+                                                                <select class="form-control form-select"
+                                                                    id="districts-data-box" name="district">
+                                                                    <option value="0">Chọn quận huyện</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-0" id="wards">
+                                                                <label class="form-label" for="zip-code">Phường/Xã/Thị
+                                                                    Trấn</label>
+                                                                <select class="form-control form-select"
+                                                                    id="wards-data-box" name="ward">
+                                                                    <option value="0">Chọn phường xã</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <br>
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="billing-address">Địa chỉ cụ
+                                                            thể</label>
+                                                        <textarea class="form-control" rows="1" name="specific_address"
+                                                            placeholder="Nhập địa chỉ cụ thể" required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="billing-address">Lưu ý khi vận
+                                                        chuyển</label>
+                                                    <textarea class="form-control" rows="2" name="note"
+                                                        placeholder="Nếu bạn có lưu ý cho chúng tôi, hãy để lại chúng ở đây"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+
+                            <li class="checkout-item">
+                                <div class="avatar checkout-icon p-1">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                        <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                    </div>
+                                </div>
+                                <div class="feed-item-list">
+                                    <div>
+                                        <h5 class="font-size-16 mb-1">Thông tin thanh toán</h5>
+                                        <br>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-size-14 mb-3">Phương thức thanh toán:</h5>
+                                        <div class="row">
+                                            <input type="hidden" id="checked_radio" name="checked_radio" value="" />
+
+                                            <div class="col-lg-4 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" value="momo"
+                                                            class="card-radio-input"
+                                                            onclick="document.getElementById('checked_radio').value=this.value;">
+                                                        <span class="card-radio py-3 text-center text-truncate">
+
+                                                            <img src="static/image/momo_icon_square_pinkbg@3x.png"
+                                                                class="bx  h2 mb-3" width="40px">
+                                                            <br>
+                                                            <p></p>Ví MoMo
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 col-sm-6">
+                                                <div>
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="pay-method" value="cod"
+                                                            class="card-radio-input"
+                                                            onclick="document.getElementById('checked_radio').value=this.value;">
+
+                                                        <span title="Thanh toán khi nhận hàng"
+                                                            class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            <span>Thanh toán<br>khi nhận hàng</span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ol>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row my-5">
+                <div class="col">
+                    <a href="{% url 'homepage' %}" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Tiếp tục mua sắm </a>
+                </div> <!-- end col -->
+                <div class="col-sm-3">
+                    <div class="text-end mt-2 mt-sm-0">
+                        <button class="btn btn-success checkout-btn">
+                            <i class="mdi mdi-cart-outline me-1"></i> Đặt Hàng </button>
+                    </div>
+                </div> <!-- end col -->
+            </div> <!-- end row-->
+        </div>
+        <div class="col-xl-5">
+            <div class="card checkout-order-summary">
+                <div class="card-body">
+                    <div class="p-3 bg-light mb-3">
+                        <h5 class="font-size-16 mb-0">Thông tin đơn hàng</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0" style="width: 110px;" scope="col">Sản phẩm</th>
+                                    <th class="border-top-0" scope="col">Mô tả</th>
+                                    <th class="border-top-0" scope="col">Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in products %}
+                                <tr>
+                                    <th scope="row"><img src="{{item.product.image.url}}" alt="product-img"
+                                            title="product-img" class="avatar-lg rounded"></th>
+                                    <td>
+                                        <h5 class="font-size-16 text-truncate"><a href="#"
+                                                class="text-dark">{{item.product.name}}</a></h5>
+
+                                        <p class="text-muted mb-0 mt-1">{{item.product.sale_price}} x
+                                            {{item.product_qty}}</p>
+                                    </td>
+                                    <td>{{item.sub_total|currency}}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Tổng tiền hàng</h5>
+                                    </td>
+                                    <td>
+                                        {{total|currency}}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Phí vận chuyển</h5>
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+
+                                <tr class="bg-light">
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Tổng thanh toán:</h5>
+                                    </td>
+                                    <input type="hidden" value="{{total}}" name="total">
+                                    <td>
+                                        {{total|currency}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.checkout-btn', function (e) {
+            e.preventDefault();
+
+            var name = document.getElementsByName('name')[0].value;
+            var phone = document.getElementsByName('phone')[0].value;
+            var specific_address = document.getElementsByName('specific_address')[0].value;
+            var ward = document.getElementsByName('ward')[0].value;
+            var district = document.getElementsByName('district')[0].value;
+            var city = document.getElementsByName('city')[0].value;
+            var note = document.getElementsByName('note')[0].value;
+            var payment_method = document.getElementsByName('checked_radio')[0].value;
+            var token = $('input[name=csrfmiddlewaretoken]').val();
+            var getInforType = document.getElementById("get_infor_type").value;
+
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'checkout' %}",
+                data: {
+                    'name': name,
+                    'phone': phone,
+                    'specific_address': specific_address,
+                    'ward': ward,
+                    'district': district,
+                    'city': city,
+                    'note': note,
+                    'payment_method': payment_method,
+                    'get_infor_type': getInforType,
+                    csrfmiddlewaretoken: token
+                },
+                success: function (response) {
+                    if (response.Url) {
+                        window.location.replace(response.Url)
+                    }
+                    else if (response.error) {
+                        alertify.error(response.error)
+                    }
+                    else {
+                        alertify.success(response);
+                        setTimeout(function () {
+                            window.location.replace("{% url 'thankyou' %}")
+                        }, 2000);
+                    }
+
+                },
+                error: function (response) {
+
+                }
+            })
+        });
+
+    })
+
+
+</script>
+
+
+{% endblock javascript %}

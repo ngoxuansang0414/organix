@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  {% load static %}
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!--
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+  -->
+  {% comment %} Bootstrap {% endcomment %}
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  {% comment %} Font Awesome {% endcomment %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+  {% comment %} Jquery Ajax {% endcomment %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <link rel="shortcut icon" type="image/png" href="{% static 'image/favicon.png' %}"/>
+
+  {% comment %} alertify js {% endcomment %}
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+  {% comment %} Default theme {% endcomment %}
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+
+  <title>{% block title %}{% endblock %}</title>
+
+  {% comment %} Auto complete jquery {% endcomment %}
+
+
+</head>
+
+
+<body class="d-flex flex-column min-vh-100" style="padding-top: 0%;">
+  <main class="flex-shrink-0">
+    {% include "nav.html" %}
+    {% block content %}{% endblock %}
+  </main>
+  <!--{% include "footer.html" %}-->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
+  <script>
+    alertify.set('notifier', 'position', 'top-right');
+  </script>
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script>
+    $(document).ready(function(){
+      var availableTags = [];
+
+      $.ajax({
+        method: "GET",
+        url: "{% url 'search' %}",
+
+        success: function(response){
+          startAutocomplete(response);
+        }
+      })
+      function startAutocomplete(availableTags){
+        $("#searchproducts").autocomplete({
+          source: availableTags
+        });
+      }
+      
+    })   
+  </script>
+  {% block javascript %}
+  
+  {% endblock javascript %}
+</body>
+
+</html>

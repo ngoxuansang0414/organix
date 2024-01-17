@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Đăng ký tài khoản{% endblock %}
+{% block content %}
+{% comment %} Address selector {% endcomment %}
+<script src="{% static '/js/address_selector.js' %}" defer></script>
+<style>
+    .login,
+    .image {
+        min-height: 90vh;
+    }
+
+    .bg-image {
+        background-image: url('{% static "/image/organiktarim-1162x700.jpg" %}');
+        background-size: cover;
+        background-position: center center;
+    }
+
+    p {
+        line-height: 5px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <!-- The image half -->
+        <div class="col-md-6 d-none d-md-flex bg-image image"></div>
+
+
+        <!-- The content half -->
+        <div class="col-md-6 bg-light">
+            <div class=" d-flex align-items-center py-5 login">
+
+                <!-- Demo content-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-xl-7 mx-auto ">
+                            <h3 class="display-4">Tạo tài khoản</h3>
+                            <br>
+                            <form id="signup">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <input name="email" type="email" placeholder="Địa chỉ email" required="required"
+                                        oninvalid="this.setCustomValidity('Hãy nhập vào email của bạn')"
+                                        oninput="setCustomValidity('')" autofocus=""
+                                        class="form-control rounded-pill border-0 shadow-sm px-4">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input name="phone" type="text" placeholder="Số điện thoại" required="required"
+                                        oninvalid="this.setCustomValidity('Hãy nhập vào số điện thoại')"
+                                        oninput="setCustomValidity('')"
+                                        class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input name="name" type="text" placeholder="Họ và tên" required="required"
+                                        class="form-control rounded-pill border-0 shadow-sm px-4 text-primary"
+                                        oninvalid="this.setCustomValidity('Hãy nhập vào tên của bạn')"
+                                        oninput="setCustomValidity('')">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input name="password" type="password" placeholder="Mật khẩu" required="required"
+                                        oninvalid="this.setCustomValidity('Hãy nhập mật khẩu của bạn')"
+                                        oninput="setCustomValidity('')"
+                                        class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                </div>
+                                <hr>
+                                <div class="form-group mb-3">
+                                    <p></p>
+                                    <div id="cities">
+                                        <select class="form-select form-control rounded-pill border-0 shadow-sm px-4"
+                                        name='city' id="cities-data-box">
+                                            <option value="0">Chọn tỉnh thành</option>
+                                        </select>
+                                    </div>
+                                    <p></p>
+                                    <div id="districts">
+                                        <select class="form-select form-control rounded-pill border-0 shadow-sm px-4"
+                                        name='district' id="districts-data-box">
+                                            <option value="0">Chọn quận huyện</option>
+                                        </select>
+                                    </div>
+                                    <p></p>
+                                    <div id="wards">
+                                        <select class="form-select form-control rounded-pill border-0 shadow-sm px-4"
+                                        name='ward' id="wards-data-box">
+                                            <option value="0">Chọn phường xã</option>
+                                        </select>
+                                    </div>
+                                    <p></p>
+                                    <input name="specific_address" type="text" placeholder="Địa chỉ" required="required"
+                                        class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                </div>
+                                <hr>
+                                <div class="form-group mb-3">
+
+
+                                    <div class="col-sm-12">
+                                        <label for="" class="text-muted">Giới tính: </label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="inlineRadio1"
+                                                value="Nam">
+                                            <label class="form-check-label" for="inlineRadio1">Nam</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="inlineRadio2"
+                                                value="Nữ">
+                                            <label class="form-check-label" for="inlineRadio2">Nữ</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="inlineRadio3"
+                                                value="Không xác định">
+                                            <label class="form-check-label" for="inlineRadio3">Không rõ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Đăng
+                                    ký</button>
+                            </form>
+                        </div>
+                    </div>
+                </div><!-- End -->
+
+            </div>
+        </div><!-- End -->
+
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+    $(document).on('submit', '#signup', function (e) {
+        e.preventDefault();
+
+        var gender_radio = document.getElementsByName('gender');
+        for (i = 0; i < gender_radio.length; i++) {
+            if (gender_radio[i].checked) {
+                var gender = gender_radio[i].value;
+            }
+        }
+        
+        var email = document.getElementsByName("email")[0].value;
+        var phone = document.getElementsByName("phone")[0].value;
+        var name = document.getElementsByName("name")[0].value;
+        var password = document.getElementsByName("password")[0].value;
+        var specific_address = document.getElementsByName("specific_address")[0].value;
+        var ward = document.getElementsByName("ward")[0].value;
+        var district = document.getElementsByName("district")[0].value;
+        var city = document.getElementsByName("city")[0].value;
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+
+
+
+        $.ajax({
+            method: 'POST',
+            url: "{% url 'signup' %}",
+            data: {
+                'email': email,
+                'phone': phone,
+                'name': name,
+                'password': password,
+                'gender': gender,
+                'specific_address': specific_address,
+                'ward': ward,
+                'district': district,
+                'city': city,
+                csrfmiddlewaretoken: token
+            },
+            success: function (data) {
+                if (data == 'Tạo tài khoản thành công!') {
+                    alertify.success(data);
+
+                    setTimeout(function () {
+                        window.location.replace("{% url 'login' %}")
+                    }, 2000);
+                }
+                else {
+                    alertify.error(data)
+                };
+            },
+            error: function (data) {
+                alertify.error('Có lỗi xảy ra!')
+            }
+        });
+    });
+
+
+    $(document).ready(function(){
+        var canDismiss = false;
+        
+        var notification = alertify.warning('Mật khẩu phải dài từ 8 ký tự, trong đó có: ít nhất 1 chữ viết hoa, 1 ký tự số và 1 ký tự đặc biệt')
+        notification.ondismiss = function(){
+            return canDismiss;
+        };
+        setTimeout(function(){ canDismiss = true;}, 5000);
+    })
+</script>
+{% endblock javascript %}

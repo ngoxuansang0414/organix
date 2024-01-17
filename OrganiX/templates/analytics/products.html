@@ -1,0 +1,40 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+{% block nav-global %}
+<a href="/admin/store/product">Xem thông tin sản phẩm</a>
+{% endblock nav-global %}
+{% block content %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chart = Highcharts.chart('container-chart', {
+            chart: {
+                type: 'column',
+            },
+
+            title: {
+                text: 'Sản phẩm bán chạy'
+            },
+            xAxis: {
+                categories: {{ products| safe }}
+                },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Số lượng đã bán'
+                }
+                
+                },
+        series: [{
+            name: 'Đã bán',
+            data: {{ data }}
+
+                }]
+            })
+        });
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <div id="container-chart" style="width:70%; height:400px; margin:0 auto;">
+    </div>
+
+{% endblock content %}
