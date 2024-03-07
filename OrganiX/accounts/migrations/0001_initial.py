@@ -9,39 +9,71 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Account',
+            name="Account",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('name', models.CharField(max_length=50)),
-                ('email', models.EmailField(max_length=100, unique=True)),
-                ('phone', models.CharField(max_length=10)),
-                ('gender', models.CharField(choices=[('Nam', 'Male'), ('Nữ', 'Female'), ('Không xác định', 'Not Specified')], default='Không xác định', max_length=15)),
-                ('date_joined', models.DateTimeField(auto_now_add=True)),
-                ('last_login', models.DateTimeField(auto_now_add=True)),
-                ('is_admin', models.BooleanField(default=False)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_active', models.BooleanField(default=False)),
-                ('is_superadmin', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("name", models.CharField(max_length=50)),
+                ("email", models.EmailField(max_length=100, unique=True)),
+                ("phone", models.CharField(max_length=10)),
+                (
+                    "gender",
+                    models.CharField(
+                        choices=[
+                            ("Nam", "Male"),
+                            ("Nữ", "Female"),
+                            ("Không xác định", "Not Specified"),
+                        ],
+                        default="Không xác định",
+                        max_length=15,
+                    ),
+                ),
+                ("date_joined", models.DateTimeField(auto_now_add=True)),
+                ("last_login", models.DateTimeField(auto_now_add=True)),
+                ("is_admin", models.BooleanField(default=False)),
+                ("is_staff", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=False)),
+                ("is_superadmin", models.BooleanField(default=False)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Address',
+            name="Address",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('specific_address', models.CharField(default='', max_length=200)),
-                ('ward', models.CharField(default='', max_length=100)),
-                ('district', models.CharField(default='', max_length=100)),
-                ('city', models.CharField(default='', max_length=100)),
-                ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("specific_address", models.CharField(default="", max_length=200)),
+                ("ward", models.CharField(default="", max_length=100)),
+                ("district", models.CharField(default="", max_length=100)),
+                ("city", models.CharField(default="", max_length=100)),
+                (
+                    "account",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

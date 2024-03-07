@@ -9,16 +9,29 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('store', '0008_reviewrating'),
+        ("store", "0008_reviewrating"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PaymentInfo',
+            name="PaymentInfo",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('signature', models.CharField(max_length=100)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='store.order')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("signature", models.CharField(max_length=100)),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="store.order"
+                    ),
+                ),
             ],
         ),
     ]

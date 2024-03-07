@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('momo', '0003_remove_paymentinfo_signature'),
+        ("momo", "0003_remove_paymentinfo_signature"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='paymentinfo',
-            name='resultCode',
+            model_name="paymentinfo",
+            name="resultCode",
             field=models.IntegerField(default=0),
         ),
     ]

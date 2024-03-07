@@ -3,6 +3,7 @@ from store.models.products import Product
 from accounts.models import Account
 from store.models.orders import Order
 
+
 class ReviewRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)

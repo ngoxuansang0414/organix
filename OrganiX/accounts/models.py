@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 class MyAccountManager(BaseUserManager):
     def create_user(self, name, phone, email, gender, password=None):
         if not email:
-            raise ValueError('Email address is required')
+            raise ValueError("Email address is required")
 
         # Tạo đối tượng user mới
         user = self.model(
@@ -26,8 +26,8 @@ class MyAccountManager(BaseUserManager):
             email=self.normalize_email(email=email),
             name=name,
             password=password,
-            phone='',
-            gender=Gender.not_specified
+            phone="",
+            gender=Gender.not_specified,
         )
         user.is_admin = True
         user.is_active = True
@@ -35,17 +35,21 @@ class MyAccountManager(BaseUserManager):
         user.is_superadmin = True
         user.save(using=self._db)
         return user
-    
+
+
 class Gender(models.TextChoices):
-	male = 'Nam'
-	female = 'Nữ'
-	not_specified = 'Không xác định'
+    male = "Nam"
+    female = "Nữ"
+    not_specified = "Không xác định"
+
 
 class Account(AbstractBaseUser):
     name = models.CharField(max_length=50)
     email = models.EmailField(max_length=100, unique=True)
     phone = models.CharField(max_length=10)
-    gender = models.CharField(max_length=15, choices = Gender.choices, default = Gender.not_specified)
+    gender = models.CharField(
+        max_length=15, choices=Gender.choices, default=Gender.not_specified
+    )
     # required
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -54,8 +58,10 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'email'    # Trường quyêt định khi login
-    REQUIRED_FIELDS = ['name']    # Các trường yêu cầu khi đk tài khoản (mặc định đã có email), mặc định có password
+    USERNAME_FIELD = "email"  # Trường quyêt định khi login
+    REQUIRED_FIELDS = [
+        "name"
+    ]  # Các trường yêu cầu khi đk tài khoản (mặc định đã có email), mặc định có password
 
     objects = MyAccountManager()
 
@@ -63,11 +69,12 @@ class Account(AbstractBaseUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        return self.is_admin    # Admin có tất cả quyền trong hệ thống
+        return self.is_admin  # Admin có tất cả quyền trong hệ thống
 
     def has_module_perms(self, add_label):
         return True
-    
+
+
 class Address(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     specific_address = models.CharField(default="", max_length=200)
@@ -76,4 +83,4 @@ class Address(models.Model):
     city = models.CharField(default="", max_length=100)
 
     class Meta:
-        verbose_name_plural = 'Address'
+        verbose_name_plural = "Address"

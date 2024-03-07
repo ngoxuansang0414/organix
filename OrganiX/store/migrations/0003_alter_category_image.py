@@ -7,13 +7,15 @@ import store.models.categories
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('store', '0002_alter_product_status'),
+        ("store", "0002_alter_product_status"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=store.models.categories.get_file_path),
+            model_name="category",
+            name="image",
+            field=models.ImageField(
+                blank=True, null=True, upload_to=store.models.categories.get_file_path
+            ),
         ),
     ]

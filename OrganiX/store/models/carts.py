@@ -3,6 +3,7 @@ from .products import Product
 from accounts.models import Account
 from django.utils import timezone
 
+
 class Cart(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
