@@ -6,6 +6,7 @@
 {% load custom_filter %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/custom/cart.css' %}">
+<script src="{% static 'js/custom/cart.js' %}"></script>
 <div class="px-4 px-lg-0">
 
   <div class="pb-5 cart-data">
@@ -55,13 +56,13 @@
                       </div>
                     </div>
                   </th>
-                  <td class="border-0 align-middle"><strong>{{item.product.sale_price|currency}}</strong></td>
+                  <td class="border-0 align-middle"><strong>{{item.product.sell_price|currency}}</strong></td>
                   <td class="border-0 align-middle"><strong></strong></td>
                   <td class="border-0 align-middle">
                     <div class="input-group mb-3 " style="width: 170px;">
                       {% csrf_token %}
                       <input type="hidden" value="{{ item.product.id }}" class="prod_id">
-                      <input type="hidden" value="{{ item.product.stock }}" id="product_avail">
+                      <input type="hidden" value="{{ item.stock }}" id="product_avail">
                       <button class="btn btn-white border border-secondary px-3 changeQuantity decrement-btn" type="button"
                         id="" data-mdb-ripple-color="dark">
                         <i class="fa-solid fa-minus"></i>
@@ -104,7 +105,7 @@
             <ul class="list-unstyled mb-4">
               <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tạm tính
                 </strong><strong>{{total|currency}}</strong></li>
-              <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Phí vận chuyển</strong><strong></strong></li>
+              <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Phí vận chuyển</strong><strong>{{shipping_fee|currency}}</strong></li>
               <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tổng thanh toán</strong>
                 <h5 class="font-weight-bold total">{{total|currency}}</h5>
               </li>
@@ -118,96 +119,3 @@
 </div>
 
 {% endblock content %}
-
-{% block javascript %}
-<script type="text/javascript">
-  $(document).ready(function() {
-    $(document).on('click', '.increment-btn', function(e) {
-      e.preventDefault();
-
-      var inc_value = $(this).closest('.product_data').find('#qty-input').val();
-      var product_avail = $(this).closest('.product_data').find('#product_avail').val();
-      var value = parseInt(inc_value, 10);
-      value = isNaN(value) ? 0 : value;
-      if (value < product_avail) {
-        value++;
-        $(this).closest('.product_data').find('#qty-input').val(value);
-      }
-
-      var product_qty = $(this).closest('.product_data').find('#qty-input').val();     
-    });
-
-    $(document).on('click', '.decrement-btn', function(e) {
-      e.preventDefault();
-
-      var dec_value = $(this).closest('.product_data').find('#qty-input').val();
-      var value = parseInt(dec_value, 10);
-      value = isNaN(value) ? 0 : value;
-      if (value > 1) {
-        value--;
-        $(this).closest('.product_data').find('#qty-input').val(value);
-      }
-    });
-
-    $(document).on('click', '.changeQuantity', function(e){
-      e.preventDefault();
-
-      var product_id = $(this).closest('.product_data').find('.prod_id').val();
-      var product_qty = $(this).closest('.product_data').find('#qty-input').val();
-      var token = $('input[name=csrfmiddlewaretoken]').val();
-
-      $.ajax({
-        method: 'POST',
-        url: "{% url 'cart' %}",
-        data: {
-          'product_id': product_id,
-          'product_qty': product_qty,
-          'update-cart' : 1,
-          csrfmiddlewaretoken: token
-        },
-        success: function(response){
-          //alertify.success(response.status);
-          if(response.flag == 1){
-            alertify.error('Đã đạt số lượng tối đa')
-          }
-          $('.cart-data').load(location.href + ' .cart-data')
-          
-
-        },
-        error: function(){
-          alertify.error('Có lỗi xảy ra!')
-        }
-      })
-    });
-    
-    $(document).on('click','.remove-btn', function(e){
-      e.preventDefault();
-
-      var product_id = $(this).closest('.product_data').find('.prod_id').val();
-      var token = $('input[name=csrfmiddlewaretoken]').val();
-
-      $.ajax({
-        method: 'POST',
-        url: "{% url 'cart' %}",
-        data: {
-          'product_id': product_id,
-          'remove-item' : 1,
-          csrfmiddlewaretoken: token
-        },
-        success: function(response){
-          alertify.success(response.status);
-          $('.cart-data').load(location.href + ' .cart-data')
-        },
-        error: function(){
-          alertify.error('Có lỗi xảy ra!')
-        }
-      })
-
-    })
-
-  });
-
-
-</script>
-
-{% endblock javascript %}

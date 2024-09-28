@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-e&(ww5rcwz!)iodliexebbiie2l#f_-qfinq3zq*1!7=^7v345"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -32,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,10 +41,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "import_export",
+    "django_celery_beat",
     "vi_address",
     "store",
     "momo",
     "accounts",
+    "RS",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +73,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "store.context_processor.cart_item_count",
             ],
         },
     },
@@ -80,6 +86,14 @@ WSGI_APPLICATION = "OrganiX.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql_psycopg2",
+    #     "NAME": "organix2",
+    #     "HOST": "35.198.202.180",
+    #     "USER": "ngoxuansang0414",
+    #     "PASSWORD": "ngoxuansang0414",
+    #     "PORT": "5432"
+    # }
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
@@ -122,11 +136,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-MEDIA_ROOT = BASE_DIR
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static_dev"),)
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = BASE_DIR / "uploads"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -134,8 +149,31 @@ MEDIA_ROOT = BASE_DIR
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.Account"
 
+
+MESSAGE_TAGS = {
+    messages.ERROR: "error",
+    messages.WARNING: "warning",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.DEBUG: "secondary",
+}
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST_USER = "wildcock2k2@gmail.com"
 EMAIL_HOST_PASSWORD = "oopr oviy wpjr xqzv"
 EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = "Organix <wildcock2k2@gmail.com>"
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://ngoxuansang0414.mercusysddns.com",
+    "https://example.com",
+]

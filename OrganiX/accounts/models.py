@@ -1,6 +1,10 @@
 from django.core.checks.messages import Error
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 
 
 class MyAccountManager(BaseUserManager):
@@ -43,20 +47,25 @@ class Gender(models.TextChoices):
     not_specified = "Không xác định"
 
 
-class Account(AbstractBaseUser):
-    name = models.CharField(max_length=50)
+class Account(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(max_length=50, verbose_name="Tên người dùng")
     email = models.EmailField(max_length=100, unique=True)
-    phone = models.CharField(max_length=10)
+    phone = models.CharField(max_length=10, verbose_name="Số điện thoại")
     gender = models.CharField(
-        max_length=15, choices=Gender.choices, default=Gender.not_specified
+        max_length=15,
+        choices=Gender.choices,
+        default=Gender.not_specified,
+        verbose_name="Giới tính",
     )
     # required
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now_add=True)
-    is_admin = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
-    is_superadmin = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tham gia")
+    last_login = models.DateTimeField(
+        auto_now_add=True, verbose_name="Đăng nhập lần cuối"
+    )
+    is_admin = models.BooleanField(default=False, verbose_name="Là admin")
+    is_staff = models.BooleanField(default=False, verbose_name="Là staff")
+    is_active = models.BooleanField(default=False, verbose_name="Kích hoạt")
+    is_superadmin = models.BooleanField(default=False, verbose_name="Là superadmin")
 
     USERNAME_FIELD = "email"  # Trường quyêt định khi login
     REQUIRED_FIELDS = [
@@ -64,6 +73,9 @@ class Account(AbstractBaseUser):
     ]  # Các trường yêu cầu khi đk tài khoản (mặc định đã có email), mặc định có password
 
     objects = MyAccountManager()
+
+    class Meta:
+        verbose_name_plural = "Tài khoản"
 
     def __str__(self):
         return self.email
@@ -76,11 +88,19 @@ class Account(AbstractBaseUser):
 
 
 class Address(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    specific_address = models.CharField(default="", max_length=200)
-    ward = models.CharField(default="", max_length=100)
-    district = models.CharField(default="", max_length=100)
-    city = models.CharField(default="", max_length=100)
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, verbose_name="Tài khoản"
+    )
+    specific_address = models.CharField(
+        default="", max_length=200, verbose_name="Địa chỉ cụ thể"
+    )
+    ward = models.CharField(default="", max_length=100, verbose_name="Mã Phường/Xã")
+    district = models.CharField(
+        default="", max_length=100, verbose_name="Mã Quận/Huyện"
+    )
+    city = models.CharField(
+        default="", max_length=100, verbose_name="Mã Thành phố/Tỉnh"
+    )
 
     class Meta:
-        verbose_name_plural = "Address"
+        verbose_name_plural = "Địa chỉ"

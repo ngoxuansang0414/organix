@@ -8,9 +8,10 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css"
     integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<link rel="stylesheet" href="../static/css/checkout.css">
+<link rel="stylesheet" href="{% static 'css/custom/checkout.css' %}">
+<script src="{% static 'js/custom/checkout.js' %}"></script>
 {% comment %} Address selector {% endcomment %}
-<script src="{% static '/js/address_selector.js' %}" defer></script>
+<script src="{% static 'js/address_selector.js' %}" defer></script>
 
 <div class="container">
 
@@ -240,7 +241,7 @@ Số điện thoại: {{user.phone}}
                                         <h5 class="font-size-16 text-truncate"><a href="#"
                                                 class="text-dark">{{item.product.name}}</a></h5>
 
-                                        <p class="text-muted mb-0 mt-1">{{item.product.sale_price}} x
+                                        <p class="text-muted mb-0 mt-1">{{item.product.sell_price}} x
                                             {{item.product_qty}}</p>
                                     </td>
                                     <td>{{item.sub_total|currency}}</td>
@@ -251,7 +252,7 @@ Số điện thoại: {{user.phone}}
                                         <h5 class="font-size-14 m-0">Tổng tiền hàng</h5>
                                     </td>
                                     <td>
-                                        {{total|currency}}
+                                        {{sub_total|currency}}
                                     </td>
                                 </tr>
 
@@ -260,7 +261,7 @@ Số điện thoại: {{user.phone}}
                                         <h5 class="font-size-14 m-0">Phí vận chuyển</h5>
                                     </td>
                                     <td>
-
+                                        {{estimated_shipping_fee|currency}}
                                     </td>
                                 </tr>
 
@@ -285,64 +286,3 @@ Số điện thoại: {{user.phone}}
 
 </div>
 {% endblock content %}
-
-{% block javascript %}
-<script>
-    $(document).ready(function () {
-        $(document).on('click', '.checkout-btn', function (e) {
-            e.preventDefault();
-
-            var name = document.getElementsByName('name')[0].value;
-            var phone = document.getElementsByName('phone')[0].value;
-            var specific_address = document.getElementsByName('specific_address')[0].value;
-            var ward = document.getElementsByName('ward')[0].value;
-            var district = document.getElementsByName('district')[0].value;
-            var city = document.getElementsByName('city')[0].value;
-            var note = document.getElementsByName('note')[0].value;
-            var payment_method = document.getElementsByName('checked_radio')[0].value;
-            var token = $('input[name=csrfmiddlewaretoken]').val();
-            var getInforType = document.getElementById("get_infor_type").value;
-
-            $.ajax({
-                method: 'POST',
-                url: "{% url 'checkout' %}",
-                data: {
-                    'name': name,
-                    'phone': phone,
-                    'specific_address': specific_address,
-                    'ward': ward,
-                    'district': district,
-                    'city': city,
-                    'note': note,
-                    'payment_method': payment_method,
-                    'get_infor_type': getInforType,
-                    csrfmiddlewaretoken: token
-                },
-                success: function (response) {
-                    if (response.Url) {
-                        window.location.replace(response.Url)
-                    }
-                    else if (response.error) {
-                        alertify.error(response.error)
-                    }
-                    else {
-                        alertify.success(response);
-                        setTimeout(function () {
-                            window.location.replace("{% url 'thankyou' %}")
-                        }, 2000);
-                    }
-
-                },
-                error: function (response) {
-
-                }
-            })
-        });
-
-    })
-
-
-</script>
-
-
-{% endblock javascript %}

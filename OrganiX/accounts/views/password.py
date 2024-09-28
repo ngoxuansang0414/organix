@@ -5,9 +5,11 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.decorators import login_required
+from store.views.test_message import get_message_list
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
 import re
 from string import punctuation
 
@@ -15,9 +17,10 @@ from string import punctuation
 def send_email_reset(request):
     if request.method == "POST":
         email = request.POST.get("email")
-        user = Account.objects.get(email=email)
+        user = Account.objects.filter(email=email).first()
         if not user:
-            return HttpResponse("Tài khoản không tồn tại!")
+            messages.error(request, "Tài khoản không tồn tại")
+            return JsonResponse({'messages': get_message_list(request)})
         current_site = get_current_site(request=request)
         mail_subject = "Đặt lại mật khẩu tài khoản Organix"
         message = render_to_string(
@@ -31,10 +34,9 @@ def send_email_reset(request):
         )
         send_email = EmailMessage(mail_subject, message, to=[email])
         send_email.send()
+        messages.success(request, "Yêu cầu đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn")
+        return JsonResponse({'messages': get_message_list(request)})
 
-        return HttpResponse(
-            "Yêu cầu đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn"
-        )
 
     if request.method == "GET":
         context = {
@@ -54,7 +56,8 @@ def reset_password_validate(request, uidb64, token):
         request.session["uid"] = uid
         return redirect("reset_password")
     else:
-        return HttpResponse("Liên kết đã hết hạn!")
+        messages.error(request, "Liên kết đã hết hạn")
+        return JsonResponse({'messages': get_message_list(request)})
 
 
 def reset_password(request):
@@ -69,12 +72,16 @@ def reset_password(request):
                 error_message = "Mật khẩu không đủ phức tạp"
                 if re.search(" ", password):
                     error_message = "Mật khẩu không được chứa khoảng trắng"
-                return HttpResponse(error_message)
+                messages.error(request, error_message)
+                return JsonResponse({'messages': get_message_list(request)})
+            
             user.set_password(password)
             user.save()
-            return JsonResponse({"msg": "Đặt lại mật khẩu thành công!", "status": True})
+            messages.success(request, "Đặt lại mật khẩu thành công")
+            return JsonResponse({'messages': get_message_list(request)})
         else:
-            return HttpResponse("Mật khẩu không khớp!")
+            messages.error(request, "Mật khẩu xác nhận không khớp")
+            return JsonResponse({'messages': get_message_list(request)})
     return render(request, "reset_password.html")
 
 
@@ -86,20 +93,25 @@ def change_password(request):
         confirm_password = request.POST.get("confirm_password")
         user = request.user
     if not user.check_password(old_password):
-        return HttpResponse("Sai mật khẩu hiện tại!")
+        messages.error(request, "Sai mật khẩu hiện tại")
+        return JsonResponse({'messages': get_message_list(request)})
     elif password != confirm_password:
-        return HttpResponse("Mật khẩu mới không khớp!")
+        messages.error(request, "Mật khẩu xác nhận không khớp")
+        return JsonResponse({'messages': get_message_list(request)})
     elif (old_password == password) and (password == confirm_password):
-        return HttpResponse("Mật khẩu mới không được trùng với mật khẩu hiện tại!")
+        messages.error(request, "Mật khẩu mới không được trùng với mật khẩu hiện tại")
+        return JsonResponse({'messages': get_message_list(request)})
     else:
         if password_check(password) is False:
             error_message = "Mật khẩu không đủ phức tạp"
             if re.search(" ", password):
                 error_message = "Mật khẩu không được chứa khoảng trắng"
-            return HttpResponse(error_message)
+            messages.error(request, error_message)
+            return JsonResponse({'messages': get_message_list(request)})
         user.set_password(password)
         user.save()
-        return JsonResponse({"msg": "Đổi mật khẩu thành công!", "status": True})
+        messages.success(request, "Đổi mật khẩu thành công")
+        return JsonResponse({'messages': get_message_list(request)})
 
 
 def password_check(password):

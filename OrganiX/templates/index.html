@@ -1,30 +1,502 @@
 {% extends 'base.html' %}
 {% block title %}OrganiX{% endblock %}
 {% block content %}
+{% load custom_filter %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/custom/index.css' %}">
-<div class="container">
-	<div class="row">
-		<div class="col-lg-12 mx-auto">
-			<!-- FIRST EXAMPLE ===================================-->
-			<div class="row py-5">
-				{% for category in categories %}
-				<div class="imageselect row add-clearfix image-imagebox">
-					<div class="col-sm-11">
-						<article class="imagebox">
-							<figure> <a href="{% url 'product' category.slug %}"><img src="{{category.image.url}}" alt="" width="285px" height="300px"></a>
-								<figcaption>
-									<h2 class="caption-title text-center">{{category.name}}</h2>
-								</figcaption>
-							</figure>
-						</article>
-					</div>
-				</div>
-				{% endfor %}
-			</div>			
-		</div>
-	</div>
-</div>
+        <div class="container-fluid py-5 mb-5 hero-header" style="background: url({% static 'image/img/hero-img.jpg' %})">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+                    <div class="col-md-12 col-lg-7">
+                        <h4 class="mb-3 text-secondary">100% Thuần hữu cơ</h4>
+                        <h1 class="mb-5 display-3 text-primary">Rau củ & thực phẩm thuần hữu cơ</h1>
+
+                    </div>
+                    <div class="col-md-12 col-lg-5">
+                        <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
+                            <div class="carousel-inner" role="listbox">
+                                <div class="carousel-item active rounded">
+                                    <img src="{% static 'image/img/hero-img-1.png' %}" class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
+                                    <a href="#" class="btn px-4 py-2 text-white rounded">Trái cây</a>
+                                </div>
+                                <div class="carousel-item rounded">
+                                    <img src="{% static 'image/img/hero-img-2.jpg' %}" class="img-fluid w-100 h-100 rounded" alt="Second slide">
+                                    <a href="#" class="btn px-4 py-2 text-white rounded">Rau củ</a>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Hero End -->
+
+
+        <!-- Featurs Section Start -->
+        <div class="container-fluid featurs py-5">
+            <div class="container py-5">
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="featurs-item text-center rounded bg-light p-4">
+                            <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
+                                <i class="fas fa-car-side fa-3x text-white"></i>
+                            </div>
+                            <div class="featurs-content text-center">
+                                <h5>Miễn phí vận chuyển</h5>
+                                <p class="mb-0">Cho đơn hàng trên 500k</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="featurs-item text-center rounded bg-light p-4">
+                            <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
+                                <i class="fas fa-user-shield fa-3x text-white"></i>
+                            </div>
+                            <div class="featurs-content text-center">
+                                <h5>Bảo mật thanh toán</h5>
+                                <p class="mb-0">100% Bảo mật thanh toán</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="featurs-item text-center rounded bg-light p-4">
+                            <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
+                                <i class="fas fa-exchange-alt fa-3x text-white"></i>
+                            </div>
+                            <div class="featurs-content text-center">
+                                <h5>30 Ngày trả hàng</h5>
+                                <p class="mb-0">Đảm bảo hoàn tiền trong 30 ngày</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="featurs-item text-center rounded bg-light p-4">
+                            <div class="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
+                                <i class="fa fa-phone-alt fa-3x text-white"></i>
+                            </div>
+                            <div class="featurs-content text-center">
+                                <h5>Hỗ trợ 24/7</h5>
+                                <p class="mb-0">Hỗ trợ nhanh chóng mọi lúc</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Featurs Section End -->
+
+
+        <!-- Fruits Shop Start-->
+        <div class="container-fluid fruite py-5">
+            <div class="container py-5">
+                <div class="tab-class text-center">
+                    <div class="row g-4">
+                        <div class="col-lg-4 text-start">
+                            <h1>Sản phẩm ngẫu nhiên</h1>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane fade show p-0 active">
+							
+                            <div class="row g-4">
+                                <div class="col-lg-12">
+                                    <div class="row g-4">
+										{% for product in products %}
+
+                                        <div class="col-md-6 col-lg-4 col-xl-3">
+                                            <div class="rounded position-relative fruite-item">
+                                                <div class="fruite-img" style="height: 20vw;">
+													<a href="{% url 'product_detail' product.category.slug product.slug %}">
+                                                    	<img src="{{product.image.url}}" class="img-fluid w-100 rounded-top" alt="" style="width: 100%; height: auto; object-fit: fill;">
+													</a>
+                                                </div>
+                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">{{product.category.name}}</div>
+                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                    <h4 class="product-name" title="{{product.name}}">{{product.name}}</h4>
+                                                    <div class="d-flex justify-content-between flex-lg-wrap">
+                                                        <p class="text-dark fs-5 fw-bold mb-0">{{product.sell_price|currency}}</p>
+                                                        <a href="{% url 'product_detail' product.category.slug product.slug %}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i>Xem chi tiết</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+										{% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane fade show p-0">
+                            <div class="row g-4">
+                                <div class="col-lg-12">
+                                    <div class="row g-4">
+                                        <div class="col-md-6 col-lg-4 col-xl-3">
+                                            <div class="rounded position-relative fruite-item">
+                                                <div class="fruite-img">
+                                                    <img src="{% static 'image/img/fruite-item-5.jpg' %}" class="img-fluid w-100 rounded-top" alt="">
+                                                </div>
+                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Fruits</div>
+                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                    <h4>Grapes</h4>
+                                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                                    <div class="d-flex justify-content-between flex-lg-wrap">
+                                                        <p class="text-dark fs-5 fw-bold mb-0">$4.99 / kg</p>
+                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4 col-xl-3">
+                                            <div class="rounded position-relative fruite-item">
+                                                <div class="fruite-img">
+                                                    <img src="{% static 'image/img/fruite-item-5.jpg' %}" class="img-fluid w-100 rounded-top" alt="">
+                                                </div>
+                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Fruits</div>
+                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                                    <h4>Raspberries</h4>
+                                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod te incididunt</p>
+                                                    <div class="d-flex justify-content-between flex-lg-wrap">
+                                                        <p class="text-dark fs-5 fw-bold mb-0">$4.99 / kg</p>
+                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                    </div>
+                </div>      
+            </div>
+        </div>
+        <!-- Fruits Shop End-->
+
+
+        <!-- Featurs Start -->
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+                <div class="row g-4 justify-content-center">
+                    <div class="col-md-6 col-lg-4">
+                        <a href="#">
+                            <div class="service-item bg-secondary rounded border border-secondary">
+                                <img src="{% static 'image/img/featur-1.jpg' %}" class="img-fluid rounded-top w-100" alt="">
+                                <div class="px-4 rounded-bottom">
+                                    <div class="service-content bg-primary text-center p-4 rounded">
+                                        <h5 class="text-white">Fresh Apples</h5>
+                                        <h3 class="mb-0">20% OFF</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <a href="#">
+                            <div class="service-item bg-dark rounded border border-dark">
+                                <img src="{% static 'image/img/featur-2.jpg' %}" class="img-fluid rounded-top w-100" alt="">
+                                <div class="px-4 rounded-bottom">
+                                    <div class="service-content bg-light text-center p-4 rounded">
+                                        <h5 class="text-primary">Tasty Fruits</h5>
+                                        <h3 class="mb-0">Free delivery</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <a href="#">
+                            <div class="service-item bg-primary rounded border border-primary">
+                                <img src="{% static 'image/img/featur-3.jpg' %}" class="img-fluid rounded-top w-100" alt="">
+                                <div class="px-4 rounded-bottom">
+                                    <div class="service-content bg-secondary text-center p-4 rounded">
+                                        <h5 class="text-white">Exotic Vegitable</h5>
+                                        <h3 class="mb-0">Discount 30$</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Featurs End -->
+
+
+
+        <!-- Banner Section Start-->
+        <div class="container-fluid banner bg-secondary my-5">
+            <div class="container py-5">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="py-4">
+                            <h1 class="display-3 text-white">Trái cây tươi ngon</h1>
+                            <p class="fw-normal display-3 text-dark mb-4">của chúng tôi</p>
+                            <p class="mb-4 text-dark">Trái cây tươi ngon, chất lượng cao, được tuyển chọn kỹ lưỡng. Chúng tôi cam kết mang đến cho bạn những trải nghiệm mua sắm tuyệt vời và sản phẩm tốt nhất cho sức khỏe gia đình.</p>
+                            <a href="#" class="banner-btn btn border-2 border-white rounded-pill text-dark py-3 px-5">Mua ngay</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="position-relative">
+                            <img src="{% static 'image/img/baner-1.png' %}" class="img-fluid w-100 rounded" alt="">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Banner Section End -->
+
+
+        <!-- Bestsaler Product Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+                    <h1 class="display-4">Sản phẩm bán chạy</h1>
+                </div>
+                <div class="row g-4">
+					{% for product in products %}
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="p-4 rounded bg-light">
+                            <div class="row align-items-center">
+                                <div class="col-6 fruite-img" style="height: 15vw;">
+									<a href="{% url 'product_detail' product.category.slug product.slug %}">
+                                    	<img src="{{product.image.url}}" class="img-fluid rounded-circle w-100" alt="" style="width: 100%; height: auto; object-fit: fill;">
+									</a>
+                                </div>
+                                <div class="col-6">
+                                    <p class="h5">{{product.name}}</p>
+                                    <div class="d-flex my-3">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <h4 class="mb-3">{{product.sell_price|currency}}</h4>
+                                    <a href="{% url 'product_detail' product.category.slug product.slug %}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i>Xem chi tiết</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					{% endfor %}
+                    
+                    
+                    
+                </div>
+            </div>
+        </div>
+        <!-- Bestsaler Product End -->
+
+
+        <!-- Fact Start -->
+        <div class="container-fluid py-5">
+            <div class="container">
+                <div class="bg-light p-5 rounded">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-md-6 col-lg-6 col-xl-3">
+                            <div class="counter bg-white rounded p-5">
+                                <i class="fa fa-users text-secondary"></i>
+                                <h4>Khách hàng yêu thích</h4>
+                                <h1>1963</h1>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-6 col-xl-3">
+                            <div class="counter bg-white rounded p-5">
+                                <i class="fa fa-users text-secondary"></i>
+                                <h4>Chất lượng dịch vụ</h4>
+                                <h1>99%</h1>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-6 col-xl-3">
+                            <div class="counter bg-white rounded p-5">
+                                <i class="fa fa-users text-secondary"></i>
+                                <h4>Chứng chỉ chất lượng</h4>
+                                <h1>33</h1>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-6 col-xl-3">
+                            <div class="counter bg-white rounded p-5">
+                                <i class="fa fa-users text-secondary"></i>
+                                <h4>Số lượng mặt hàng</h4>
+                                <h1>789</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fact Start -->
+
+
+        <!-- Tastimonial Start -->
+        <div class="container-fluid testimonial py-5">
+            <div class="container py-5">
+                <div class="testimonial-header text-center">
+                    <h4 class="text-primary">Our Testimonial</h4>
+                    <h1 class="display-5 mb-5 text-dark">Our Client Saying!</h1>
+                </div>
+                <div class="owl-carousel testimonial-carousel">
+                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
+                        <div class="position-relative">
+                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+                            <div class="mb-4 pb-4 border-bottom border-secondary">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center flex-nowrap">
+                                <div class="bg-secondary rounded">
+                                    <img src="{% static 'image/img/testimonial-1.jpg' %}" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="">
+                                </div>
+                                <div class="ms-4 d-block">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
+                        <div class="position-relative">
+                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+                            <div class="mb-4 pb-4 border-bottom border-secondary">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center flex-nowrap">
+                                <div class="bg-secondary rounded">
+                                    <img src="{% static 'image/img/testimonial-1.jpg' %}" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="">
+                                </div>
+                                <div class="ms-4 d-block">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
+                        <div class="position-relative">
+                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+                            <div class="mb-4 pb-4 border-bottom border-secondary">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center flex-nowrap">
+                                <div class="bg-secondary rounded">
+                                    <img src="{% static 'image/img/testimonial-1.jpg' %}" class="img-fluid rounded" style="width: 100px; height: 100px;" alt="">
+                                </div>
+                                <div class="ms-4 d-block">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Tastimonial End -->
+
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+            <div class="container py-5">
+
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="text-light mb-3">Tại sao khách hàng chọn chúng tôi?</h4>
+                            <p class="mb-4">Khách hàng chọn chúng tôi vì chúng tôi cam kết mang đến những sản phẩm organic 
+							chất lượng cao, hoàn toàn tự nhiên và an toàn cho sức khỏe.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="d-flex flex-column text-start footer-item">
+                            <h4 class="text-light mb-3">Thông tin</h4>
+                            <a class="btn-link" href="">Về chúng tôi</a>
+                            <a class="btn-link" href="">Chính sách bảo mật</a>
+                            <a class="btn-link" href="">Điều khoản</a>
+                            <a class="btn-link" href="">Chính sách trả hàng</a>
+                            <a class="btn-link" href="">FAQ & Hỗ trợ</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="d-flex flex-column text-start footer-item">
+                            <h4 class="text-light mb-3">Tài khoản</h4>
+                            <a class="btn-link" href="">Tài khoản của tôi</a>
+                            <a class="btn-link" href="">Giỏ hàng</a>
+                            <a class="btn-link" href="">Lịch sử mua hàng</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-item">
+                            <h4 class="text-light mb-3">Liên Hệ</h4>
+                            <p>Địa chỉ: Trâu Quỳ, Gia Lâm, Hà Nội</p>
+                            <p>Email: organix@gmail.com</p>
+                            <p>SĐT: 0123 456 789</p>							
+
+							<div class="d-flex ">
+								<a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
+								<a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
+								<a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-youtube"></i></a>
+								<a class="btn btn-outline-secondary btn-md-square rounded-circle" href="#"><i class="fab fa-linkedin-in"></i></a>
+							</div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/custom/easing.min.js' %}"></script>
+    <script src="{% static 'js/custom/waypoints.min.js' %}"></script>
+    <script src="{% static 'js/custom/lightbox.min.js' %}"></script>
+    <script src="{% static 'js/custom/owl.carousel.min.js' %}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'js/custom/main.js' %}"></script>
+
 
 {% endblock content %}
 

@@ -1,23 +1,24 @@
 from django.contrib import admin
 from django.urls import path, include
-from store.views.home import Index, store, product, product_detail
+from store.views.home import Index, store, products, product_detail
 from .views.cart import Cart
 from .views.checkout import CheckOut
 from momo.views import thanks
-from .views.order import OrderView
+from .views.order import OrderView, orderResult
 from store.views.search import SearchView
 from store.views.rating import submit_review
 from django.contrib.auth.decorators import login_required
 from .views.address import select_city, select_district, select_ward
-
+from .views.test_message import Message
 
 urlpatterns = [
     path("", Index.as_view(), name="homepage"),
     path("store", store, name="store"),
-    path("store/<str:slug>", product, name="product"),
+    # path("store/<str:slug>", product, name="product"),
     path(
         "store/<str:cate_slug>/<str:prod_slug>", product_detail, name="product_detail"
     ),
+    path("store/<str:slug>", products, name="products"),
     path(
         "cart",
         login_required(Cart.as_view(), login_url="/accounts/login?next=/store"),
@@ -32,6 +33,11 @@ urlpatterns = [
         "orders",
         login_required(OrderView.as_view(), login_url="/accounts/login?next=/store"),
         name="orders",
+    ),
+    path(
+        "order/result/<str:orderId>",
+        login_required(orderResult, login_url="/accounts/login?next=/store"),
+        name="order_result",
     ),
     path(
         "thankyou",
@@ -50,4 +56,5 @@ urlpatterns = [
     path("address/<str:district>/wards", select_ward, name="ward"),
     # tim kiem san pham
     path("search", SearchView.as_view(), name="search"),
+    path("message", Message.as_view(), name="test_message"),
 ]

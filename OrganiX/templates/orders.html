@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %}Đơn hàng{% endblock %}
 {% block content %}
 {% load static %}
@@ -8,6 +7,7 @@
 {% load order %}
 {% load tz %}
 <link rel="stylesheet" href="{% static 'css/custom/order.css' %}">
+<script src="{% static 'js/custom/order.js' %}"></script>
 <div class="container">
 
     <section class="section-conten padding-y bg">
@@ -77,7 +77,7 @@
                                     <td>
                                         <p class="title mb-0">{{item.product.name}} </p>
                                         <var
-                                            class="price text-muted">{{item.product.sale_price|currency}}x{{item.quantity}}</var>
+                                            class="price text-muted">{{item.price|currency}}x{{item.quantity}}</var>
                                     </td>
                                     <td>Tổng tiền<br>{{item.sub_total|currency}}</td>
                                     <td>
@@ -174,47 +174,7 @@
 
             </div> <!-- row.// -->
         </div>
-
-
     </section>
+{% endblock content %}
 
-
-
-    {% endblock content %}
-
-    {% block javascript %}
-    <script>
-        $(document).ready(function () {
-            cancel_order_btn = document.querySelectorAll('.cancel_order_btn');
-            cancel_order_btn.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    alertify.confirm('Hủy đơn hàng', 'Bạn chắc chắn muốn hủy đơn hàng?', function () {
-                        var order_id = document.getElementById('canceled_order_id').value;
-                        var token = $('input[name=csrfmiddlewaretoken]').val()
-                        $.ajax({
-                            method: 'POST',
-                            url: "{% url 'orders' %}",
-                            data:{
-                                'order_id': order_id,
-                                csrfmiddlewaretoken: token
-                            },
-                            success: function(response){
-                                if(response.error){
-                                    alertify.error('Đã xảy ra lỗi')
-                                }
-                                else{
-                                    window.location.replace("{% url 'orders' %}")
-                                }
-                                
-                            }
-                        })
-                    },
-                    function(){
-
-                    });
-                })
-            })
-        })
-
-    </script>
-    {% endblock javascript %}
+    

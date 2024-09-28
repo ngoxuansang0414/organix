@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=150)),
                 ("unit", models.CharField(default="sản phẩm", max_length=30)),
                 ("original_price", models.IntegerField(default=0)),
-                ("sale_price", models.IntegerField(default=0)),
+                ("sell_price", models.IntegerField(default=0)),
                 ("stock", models.IntegerField(default=0)),
                 (
                     "image",

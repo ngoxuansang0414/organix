@@ -1,12 +1,12 @@
 from django.contrib import admin
 from store.models.categories import Category
 from store.models.orders import Order, OrderItem
-from store.models.products import Product
 from store.models.description import Description
 from store.models.carts import Cart
 from store.models.reviewrating import ReviewRating
+from store.models.products import Product, Batch
 from datetime import datetime, timedelta
-
+from import_export.admin import ImportExportModelAdmin
 from django.db.models import Count, Sum, F, Q
 from django.shortcuts import render
 
@@ -56,7 +56,7 @@ class OrderAdmin(admin.ModelAdmin):
             revenue = completed_order.aggregate(revenue=Sum("total_price"))
             profit = completed_order.aggregate(
                 profit=Sum(
-                    F("orderitem__quantity") * F("orderitem__product__sale_price")
+                    F("orderitem__quantity") * F("orderitem__product__sell_price")
                     - F("orderitem__quantity") * F("orderitem__product__original_price")
                 )
             )
@@ -106,7 +106,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = [
         "name",
         "original_price",
-        "sale_price",
+        "sell_price",
         "category",
         "created_at",
         "modified_at",
@@ -179,10 +179,15 @@ class ReviewRatingAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
 
-admin.site.register(Category, CategoryAdmin)
+class BatchAdmin(admin.ModelAdmin):
+    list_display = ["id", "Product", "quantity", "status", "expiry_date"]
+
+
+admin.site.register(Category, ImportExportModelAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Product, ProductAdmin)
+admin.site.register(Product, ImportExportModelAdmin)
 admin.site.register(Cart, CartAdmin)
-admin.site.register(Description, DescriptionAdmin)
+admin.site.register(Description, ImportExportModelAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(ReviewRating, ReviewRatingAdmin)
+admin.site.register(Batch, BatchAdmin)

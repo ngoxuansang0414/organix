@@ -3,9 +3,10 @@ from django.contrib.auth.hashers import make_password
 from accounts.models import Gender, Account, Address
 from store.models.carts import Cart
 from django.views import View
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse
 from vi_address.models import Ward, District, City
-
+from store.views.test_message import get_message_list
+from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
@@ -14,6 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 import re
 from string import punctuation
+from email.mime.multipart import MIMEMultipart
 
 
 class Signup(View):
@@ -25,24 +27,28 @@ class Signup(View):
         name = request.POST.get("name")
         phone = request.POST.get("phone")
         password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
         gender = request.POST.get("gender")
         specific_address = request.POST.get("specific_address")
         tmp_ward = request.POST.get("ward")
         tmp_district = request.POST.get("district")
         tmp_city = request.POST.get("city")
-
         if not (
             email
             and name
             and phone
             and password
+            and confirm_password
             and gender
             and specific_address
-            and tmp_ward != 0
-            and tmp_district != 0
-            and tmp_city != 0
+            and (tmp_ward != '0')
         ):
-            return HttpResponse("Hãy điền đầy đủ thông tin")
+            messages.error(request, "Hãy điền đầy đủ thông tin")
+            return JsonResponse({'messages': get_message_list(request)})
+        
+        if password != confirm_password:
+            messages.error(request, "Mật khẩu xác nhận không khớp")
+            return JsonResponse({'messages': get_message_list(request)})
         ward = Ward.objects.get(id=tmp_ward)
         district = District.objects.get(id=tmp_district)
         city = City.objects.get(id=tmp_city)
@@ -51,7 +57,8 @@ class Signup(View):
         user = Account(email=email, phone=phone, password=password)
         error_message = self.validateCustomer(user)
         if error_message:
-            return HttpResponse(error_message)
+            messages.error(request, error_message)
+            return JsonResponse({'messages': get_message_list(request)})
         else:
             user = Account.objects.create_user(
                 email=email, name=name, phone=phone, password=password, gender=gender
@@ -76,18 +83,19 @@ class Signup(View):
                     "token": default_token_generator.make_token(user),
                 },
             )
+            header = MIMEMultipart()
             send_email = EmailMessage(mail_subject, message, to=[email])
             send_email.send()
-
-            return HttpResponse("Tạo tài khoản thành công!")
+            messages.error(request, "Tạo tài khoản thành công")
+            return JsonResponse({'messages': get_message_list(request)})
 
     def validateCustomer(self, customer):
         error_message = None
 
         if Account.objects.filter(email=customer.email):
             error_message = "Email này đã được sử dụng"
-        elif len(customer.phone) < 10:
-            error_message = "Số điện thoại phải dài 10 ký tự"
+        elif self.vietnamese_phone_number_check(customer.phone) == False:
+            error_message = "Số điện thoại không hợp lệ"
         elif len(customer.password) < 8:
             error_message = "Mật khẩu phải chứa nhiều hơn 8 ký tự"
         elif self.email_check(customer.email) is False:
@@ -123,3 +131,10 @@ class Signup(View):
                 return False
             else:
                 return True
+            
+    def vietnamese_phone_number_check(phone_number):
+        # Mẫu số điện thoại Việt Nam hợp lệ
+        pattern = r"^(?:\+84|0)(3[2-9]|5[5|6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$"
+        
+        # Kiểm tra số điện thoại có khớp với mẫu hay không
+        return bool(re.match(pattern, phone_number))

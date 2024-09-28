@@ -6,17 +6,22 @@ import requests
 import hmac
 import hashlib
 from momo.models import PaymentInfo
+from django.contrib.sites.shortcuts import get_current_site
 
 
-def payWithMoMo(orderId, amount):
+def payWithMoMo(request, orderId, amount):
     # parameters send to MoMo get get payUrl
+    current_site = get_current_site(request=request)
+    print(current_site)
     endpoint = "https://test-payment.momo.vn/v2/gateway/api/create"
     partnerCode = "MOMO"
     accessKey = "F8BBA842ECF85"
     secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
     orderInfo = f"Thanh toan don hang #{orderId}"
-    redirectUrl = "http://localhost:8080/momo/thanks"
-    ipnUrl = "http://localhost:8080/momo/thanks"
+    # redirectUrl = request.build_absolute_uri('/momo/thanks')
+    # ipnUrl = request.build_absolute_uri('/momo/ipn')
+    redirectUrl = f"http://ngoxuansang0414.mercusysddns.com/order/result/{orderId}"
+    ipnUrl = "http://ngoxuansang0414.mercusysddns.com/momo/ipn"
     amount = str(amount)
     # orderId = str(uuid.uuid4())
     # requestId = str(uuid.uuid4())
@@ -59,7 +64,6 @@ def payWithMoMo(orderId, amount):
     )
     signature = h.hexdigest()
     # print("--------------------SIGNATURE----------------")
-
     # json object send to MoMo endpoint
 
     data = {
@@ -79,7 +83,7 @@ def payWithMoMo(orderId, amount):
     }
 
     new_momo_payment = PaymentInfo()
-    new_momo_payment.order = orderId
+    new_momo_payment.orderId = orderId
     new_momo_payment.save()
     # print("--------------------JSON REQUEST----------------\n")
     data = json.dumps(data)

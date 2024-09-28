@@ -25,7 +25,7 @@ urlpatterns = [
         reset_password_validate,
         name="reset_password_validate",
     ),
-    path("reset_password/", reset_password, name="reset_password"),
+    path("reset_password", reset_password, name="reset_password"),
     path(
         "profile",
         login_required(User.as_view(), login_url="/accounts/login?next=/store"),

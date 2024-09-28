@@ -17,6 +17,9 @@ class AccountAdmin(UserAdmin):
         "email",
         "name",
     )  # Các trường có gắn link dẫn đến trang detail
+    add_fieldsets = (
+        (None, {"fields": ("name", "email", "phone", "gender", "is_active")}),
+    )
     readonly_fields = ("last_login", "date_joined")  # Chỉ cho phép đọc
     ordering = ("-date_joined",)  # Sắp xếp theo chiều ngược
 

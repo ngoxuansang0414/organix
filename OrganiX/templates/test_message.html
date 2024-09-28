@@ -1,0 +1,38 @@
+<!-- <div class="container-fluid"> -->
+
+    <div class="message" id="message-container">
+    {% if messages %}
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }} popup-message" {% endif %} role="alert" style="margin: 0px">
+        {% if message.level == messages.ERROR %}
+        Error:
+        {% endif %}
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% comment %} {% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} popup-message">
+            {{ message }}
+            <span class="close">&times;</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %} {% endcomment %}
+    <!-- <div>
+        {% csrf_token %}
+        <button id="ERROR" class="btn-grp" value="error" onclick="document.getElementById('get-message').value=this.value;">ERROR</button>
+        <button id="WARNING" class="btn-grp" value="warning" onclick="document.getElementById('get-message').value=this.value;">WARNING</button>
+        <button id="INFO" class="btn-grp" value="info" onclick="document.getElementById('get-message').value=this.value;">INFO</button>
+        <button id="SUCCESS" class="btn-grp" value="success" onclick="document.getElementById('get-message').value=this.value;">SUCCESS</button>
+        <button id="DEBUG" class="btn-grp" value="debug" onclick="document.getElementById('get-message').value=this.value;">DEBUG</button>
+        <input type="hidden" id="get-message" value="">
+    </div> -->
+    </div>  
+</div>

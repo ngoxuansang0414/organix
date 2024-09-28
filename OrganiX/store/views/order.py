@@ -6,7 +6,7 @@ from store.models.products import Product
 from store.models.orders import Order, OrderItem
 from django.http import HttpResponse, JsonResponse
 from momo.models import PaymentInfo
-from momo.views import refund
+from momo.views import refund, thanks
 
 
 class OrderView(View):
@@ -35,20 +35,26 @@ class OrderView(View):
         ).first()
         if canceled_order and canceled_order.status == "Đang chờ":
             if canceled_order.payment_method == "momo":
-                amount = canceled_order.total_price
-                transId = PaymentInfo.objects.get(order=order_id).transId
-                refund_status = refund(order_id, amount, transId)
+                refund_status = refund(order_id)
                 if refund_status != 0:
                     return JsonResponse({"error": "1"})
-            canceledItems = OrderItem.objects.filter(order=canceled_order)
-            for canceledItem in canceledItems:
-                canceledProduct = Product.objects.get(pk=canceledItem.product.id)
-                canceledProduct.stock += canceledItem.quantity
-                canceledProduct.save()
-                print("Them lai vao kho hang thanh cong")
+            Order.return_stock(canceled_order.id, "huy")
             canceled_order.status = "Đã hủy"
             canceled_order.save()
         else:
             return JsonResponse({"error": "1"})
 
         return redirect("orders")
+
+
+def orderResult(request, orderId):
+    order = Order.objects.filter(tracking_no=orderId).first()
+    if request.user.id != order.account_id:
+        return redirect("homepage")
+    if order.payment_method == "cod":
+        return render(request, "thankyou.html")
+    elif order.payment_method == "momo":
+        data = thanks(orderId)
+        return render(request, "thankyou.html", {"data": data})
+
+    return HttpResponse()

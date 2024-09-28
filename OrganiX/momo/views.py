@@ -1,110 +1,120 @@
 from django.shortcuts import render
 from django.http.response import HttpResponse
-from momo.models import PaymentInfo
+from momo.models import PaymentInfo, resultcode
 from store.models.carts import Cart
 from store.models.orders import Order, OrderItem
 from store.models.products import Product
-from momo.payment_sign import paymennt_sign
+from momo.payment_sign import paymennt_sign, check_paymennt
 from momo.refund_sign import refund_sign
 import json
 import requests
+from django.views.decorators.csrf import csrf_exempt
+import urllib.parse
 
 
-def thanks(request):
-    amount = request.GET.get("amount")
-    extraData = request.GET.get("extraData")
-    orderId = request.GET.get("orderId")
-    orderType = request.GET.get("orderType")
-    partnerCode = request.GET.get("partnerCode")
-    payType = request.GET.get("payType")
-    requestId = request.GET.get("requestId")
-    responseTime = request.GET.get("responseTime")
-    resultCode = request.GET.get("resultCode")
-    transId = request.GET.get("transId")
-    signature = request.GET.get("signature")
+def thanks(orderId):
+    # amount = request.GET.get("amount")
+    # extraData = request.GET.get("extraData")
+    # orderId = request.GET.get("orderId")
+    # orderType = request.GET.get("orderType")
+    # partnerCode = request.GET.get("partnerCode")
+    # payType = request.GET.get("payType")
+    # requestId = request.GET.get("requestId")
+    # responseTime = request.GET.get("responseTime")
+    # resultCode = request.GET.get("resultCode")
+    # transId = request.GET.get("transId")
+    # signature = request.GET.get("signature")
+    # # orderInfo
+    # # message
+    check_payment = PaymentInfo.objects.filter(orderId=orderId).first()
+    resultCode = str(check_payment.resultCode)
+    errorCodeTable = resultcode.objects.filter(id=1).first().data
+    # truong hop bi loi phia doi tac
+    message = errorCodeTable[resultCode]
+    order_processed = Order.objects.filter(tracking_no=orderId).first()
+    if order_processed.processed:
+        data = {"resultCode": resultCode, "message": message}
+        print("don online da xu ly")
+        return data
+    else:
+        if not check_payment:
+            resultCode = "99"
+            print("truong hop bi loi khong tim thay giao dich phia cua hang")
+        # truong hop thanh toan that bai
+        elif check_payment and resultCode != "0":
+            # truong hop thanh toan bi tu choi boi nguoi dung
+            if resultCode == "1006":
+                Order.return_stock(order_processed.id, "huy")
+                order_processed.status = "Đã hủy"
+            elif resultCode == "9000":
+                pass
+        order_processed.processed = True
+        order_processed.save()
+        data = {"resultCode": resultCode, "message": message}
 
-    if resultCode:
-        resign = paymennt_sign(
+    return data
+
+
+@csrf_exempt
+def ipn(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        partnerCode = data["partnerCode"]
+        orderId = data["orderId"]
+        requestId = data["requestId"]
+        amount = str(data["amount"])
+        orderInfo = data["orderInfo"]
+        orderType = data["orderType"]
+        transId = str(data["transId"])
+        resultCode = str(data["resultCode"])
+        message = data["message"]
+        payType = data["payType"]
+        responseTime = str(data["responseTime"])
+        extraData = data["extraData"]
+        signature = data["signature"]
+        resign = check_paymennt(
             amount,
             extraData,
+            message,
             orderId,
+            orderInfo,
+            orderType,
             partnerCode,
             payType,
             requestId,
             responseTime,
             resultCode,
             transId,
-            orderType,
         )
-        signature_check = signature == resign
-        check_payment = PaymentInfo.objects.get(order=orderId)
-        if not check_payment:
-            resultCode = "99"
-            print("truong hop bi loi khong tim thay giao dich")
-        # truong hop thanh toan bi loi khong xac dinh
-        elif check_payment and (resultCode != "0" and resultCode != "1006"):
-            failed_order = Order.objects.get(tracking_no=orderId)
-            canceledItems = OrderItem.objects.filter(order=failed_order)
-            for canceledItem in canceledItems:
-                canceledProduct = Product.objects.get(pk=canceledItem.product.id)
-                canceledProduct.stock += canceledItem.quantity
-                canceledProduct.save()
-                if Cart.objects.get(account=request.user, product=canceledProduct.pk):
-                    oldCart = Cart.objects.get(
-                        account=request.user, product=canceledProduct.pk
-                    )
-                    if (
-                        oldCart.product_qty + canceledItem.quantity
-                        <= canceledProduct.stock
-                    ):
-                        oldCart.product_qty += canceledItem.quantity
-                        oldCart.save()
-                elif canceledItem.product.stock > canceledItem.quantity:
-                    oldCart = Cart.objects.get(account=request.user)
-                    oldCart.create(
-                        product=canceledItem.product.pk,
-                        product_qty=canceledItem.quantity,
-                    )
-                    oldCart.save()
-            failed_order.delete()
-            check_payment.resultCode = resultCode
-            check_payment.save()
-            print("truong hop thanh toan bi loi khong xac dinh")
-        # truong hop thanh toan bi tu choi boi nguoi dung
-        elif check_payment and resultCode == "1006" and signature_check:
-            if Order.objects.get(tracking_no=orderId):
-                failed_order = Order.objects.get(tracking_no=orderId)
-                print("Tim thay don hang")
-                canceledItems = OrderItem.objects.filter(order=failed_order)
-                for canceledItem in canceledItems:
-                    canceledProduct = Product.objects.get(pk=canceledItem.product.id)
-                    canceledProduct.stock += canceledItem.quantity
-                    canceledProduct.save()
-                    print("Them lai vao kho hang thanh cong")
-                    canceledItem.delete()
-                    print("xoa order item thanh cong")
-                failed_order.delete()
-                print("xoa don hang bi tu choi thanh toan thanh cong")
-                check_payment.resultCode = resultCode
-                check_payment.save()
-                print("truong hop thanh toan bi tu choi boi nguoi dung")
-
-        # truong hop thanh cong
-        check_payment.transId = transId
-        check_payment.save()
-
-    return render(request, "thankyou.html", {"resultCode": resultCode})
+        if resign == signature:
+            PaymentInfo.objects.filter(orderId=orderId).update(
+                amount=amount,
+                extraData=extraData,
+                message=message,
+                orderInfo=orderInfo,
+                orderType=orderType,
+                partnerCode=partnerCode,
+                payType=payType,
+                requestId=requestId,
+                responseTime=responseTime,
+                resultCode=resultCode,
+                transId=transId,
+                signature=signature,
+            )
+            thanks(orderId)
+    return HttpResponse(status=200)
 
 
-def refund(orderId, amount, transId):
+def refund(orderId):
+    info = PaymentInfo.objects.filter(orderId=orderId).first()
     endpoint = "https://test-payment.momo.vn/v2/gateway/api/refund"
     partnerCode = "MOMO"
-    amount = str(amount)
     description = f"Hoan tien don hang #{orderId}"
     orderId = f"refund_{orderId}"
     requestId = orderId
     lang = "vi"
-
+    amount = info.amount
+    transId = info.transId
     signature = refund_sign(
         amount, description, orderId, partnerCode, requestId, transId
     )

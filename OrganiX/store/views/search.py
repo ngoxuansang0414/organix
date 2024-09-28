@@ -1,12 +1,14 @@
 from store.models.products import Product
 from django.http import JsonResponse
 from django.views import View
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+import json
 
 
 class SearchView(View):
     def get(self, request):
-        products = Product.objects.filter(status=0).values_list("name", flat=True)
+        products = Product.objects.filter(status=1).values_list("name", flat=True)
         productsList = list(products)
         return JsonResponse(productsList, safe=False)
 

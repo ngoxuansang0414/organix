@@ -2,289 +2,233 @@
 {% block title %}{{product.name}}{% endblock %}
 {% block content %}
 {% load custom_filter %}
+{% load weight %}
 {% load order %}
 {% load tz %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/custom/product_detail.css' %}">
-<!-- content -->
-<div class="container">
-  <div class="row gx-5 product_data mt-4">
-    <aside class="col-lg-6">
-      <div class="border rounded-4 mb-3 d-flex justify-content-center">
-        <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="{{product.image.url}}">
-          <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit"
-            src="{{product.image.url}}" />
-        </a>
+<script src="{% static 'js/custom/product_detail.js' %}"></script>
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+  <h1 class="text-center text-white display-6">Chi tiết sản phẩm</h1>
+  <ol class="breadcrumb justify-content-center mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'products' 'all' %}">Sản phẩm</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'products' product.category.slug %}">{{product.category.name}}</a></li>
+    <li class="breadcrumb-item active text-white">{{product.name}}</li>
+  </ol>
+</div>
+<!-- Single Page Header End -->
+
+
+<!-- Single Product Start -->
+<div class="container-fluid py-5 mt-5">
+  <div class="container py-5">
+    <div class="row g-4 mb-5">
+      <div class="col-lg-8 col-xl-9">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="border rounded">
+              <a href="#">
+                <img src="{{product.image.url}}" class="img-fluid rounded" alt="Image">
+              </a>
+            </div>
+          </div>
+          <div class="col-lg-6 product_data">
+            <h4 class="fw-bold mb-3">{{product.name}}</h4>
+            <p class="mb-3">Loại: {{product.category.name}}</p>
+            <h5 class="fw-bold mb-3">{{product.sell_price|currency}} / {{product.unit|weight}}</h5>
+            <div class="d-flex mb-4">
+              <i class="fa fa-star text-secondary"></i>
+              <i class="fa fa-star text-secondary"></i>
+              <i class="fa fa-star text-secondary"></i>
+              <i class="fa fa-star text-secondary"></i>
+              <i class="fa fa-star"></i>
+            </div>
+            <div class="px-2">
+              <div class="row g-4">
+                <div class="col-12">
+                  <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                    <div class="col-6">
+                      <p class="mb-0">Chứng nhận/Canh tác</p>
+                    </div>
+                    <div class="col-6">
+                      <p class="mb-0">{{description.certification}}</p>
+                    </div>
+                  </div>
+                  <div class="row text-center align-items-center justify-content-center py-2">
+                    <div class="col-6">
+                      <p class="mb-0">Xuất xứ</p>
+                    </div>
+                    <div class="col-6">
+                      <p class="mb-0">{{description.origin}}</p>
+                    </div>
+                  </div> 
+                  <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                    <div class="col-6">
+                      <p class="mb-0">Hạn sử dụng</p>
+                    </div>
+                    <div class="col-6">
+                      <p class="mb-0">{{description.expiry}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <section class="quantity-section">
+              <h5>Số lượng</h5>
+              <div class="quantity-wrapper">
+                  <div class="input-group quantity">
+                      <div class="input-group-btn">
+                          {% csrf_token %}
+                          <input type="hidden" value="{{ product.id }}" id="prod_id">
+                          <button class="btn btn-sm btn-minus rounded-circle bg-light border" id="decrement-btn">
+                              <i class="fa fa-minus"></i>
+                          </button>
+                      </div>
+                      <input type="number" class="form-control form-control-sm text-center border-0" id="qty-input" value="1">
+                      <div class="input-group-btn">
+                          <button class="btn btn-sm btn-plus rounded-circle bg-light border" id="increment-btn">
+                              <i class="fa fa-plus"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <input type="hidden" value="{{ product.stock }}" id="product_stock">
+                  <p class="stock-info">{{ product.stock }} sản phẩm có sẵn</p>
+              </div>
+          </section>
+            
+
+            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" id="addToCart-btn"><i
+                class="fa fa-shopping-bag me-2 text-primary"></i> Thêm vào giỏ </a>
+          </div>
+          <div class="col-lg-12">
+            <nav>
+              <div class="nav nav-tabs mb-3">
+                <button class="nav-link active border-white border-bottom-0" type="button" role="tab" id="nav-about-tab"
+                  data-bs-toggle="tab" data-bs-target="#nav-about" aria-controls="nav-about"
+                  aria-selected="true">Mô tả</button>
+                <button class="nav-link border-white border-bottom-0" type="button" role="tab" id="nav-mission-tab"
+                  data-bs-toggle="tab" data-bs-target="#nav-mission" aria-controls="nav-mission"
+                  aria-selected="false">Đánh giá</button>
+              </div>
+            </nav>
+            <div class="tab-content mb-2">
+              <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                <p>Công dụng: {{description.uses}}</p>
+                <p>Hướng dẫn sử dụng: {{description.instructions_for_use}}</p>
+                <p>Hướng dẫn bảo quản: {{description.preserving_instruction}}</p>
+                
+                <div class="px-2">
+                  <div class="row g-4">
+                    <div class="col-6">
+ 
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                {% for review in reviews %}
+                <div class="d-flex">
+                  <img src="{% static 'image/img/avatar.jpg' %}" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;"
+                    alt="">
+                  <div class="">
+                    <p class="mb-2" style="font-size: 14px;">{{ review.updated_at|localtime|order_date }}</p>
+                    <div class="d-flex justify-content-between">
+                      <h5>{{ review.user.name }}</h5>
+                      <div class="d-flex mb-3">
+                        <i class="fa fa-star text-secondary"></i>
+                        <i class="fa fa-star text-secondary"></i>
+                        <i class="fa fa-star text-secondary"></i>
+                        <i class="fa fa-star text-secondary"></i>
+                        <i class="fa fa-star"></i>
+                        {% if review.rating >= 1 %}{% endif %} 
+                        {% if review.rating >= 2 %}{% endif %} 
+                        {% if review.rating >= 3 %}{% endif %} 
+                        {% if review.rating >= 4 %}{% endif %} 
+                        {% if review.rating >= 5 %}{% endif %}
+                      </div>
+                    </div>
+                    <p>{{ review.review }}</p>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <div class="tab-pane" id="nav-vision" role="tabpanel">
+                <p class="text-dark">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
+                  amet diam et eos labore. 3</p>
+                <p class="mb-0">Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore.
+                  Clita erat ipsum et lorem et sit</p>
+              </div>
+            </div>
+          </div>
+          
+        </div>
       </div>
-    </aside>
-    <div class="col-lg-6">
-      <div class="ps-lg-3">
-        <h4 class="title text-dark ">
-          {{product.name}}
-        </h4>
-        <div class="d-flex flex-row my-3">
-          <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>{{ordered_quantity}} đã bán</span>
-          <hr>
-          {% if product.stock > 0 %}
-          <label class="badge bg-success">Còn hàng</label>
-          {% else %}
-          <label class="badge bg-danger">Hết hàng</label>
-          {% endif %}
-        </div>
-
-        <div class="mb-3">
-          <span class="h5">{{product.sale_price|currency }}</span>
-          <span class="text-muted">/{{product.unit}}</span>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-12 mx-auto">
-            <!-- Accordion -->
-            <div id="accordionExample" class="accordion shadow">
-
-              <!-- Accordion item 1 -->
-              <div class="card">
-                <div id="headingOne" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseOne"
-                      aria-expanded="false" aria-controls="collapseOne"
-                      class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Chứng nhận/Canh
-                      tác</a></h6>
+      <div class="col-lg-4 col-xl-3">
+        <div class="row g-4 fruite">
+          <div class="col-lg-12">
+            
+          </div>
+          <div class="col-lg-12">
+            <h4 class="mb-4">Featured products</h4>
+            <div class="d-flex align-items-center justify-content-start">
+              <div class="rounded" style="width: 100px; height: 100px;">
+                <img src="{% static 'image/img/featur-1.jpg' %}" class="img-fluid rounded" alt="Image">
+              </div>
+              <div>
+                <h6 class="mb-2">Big Banana</h6>
+                <div class="d-flex mb-2">
+                  <i class="fa fa-star text-secondary"></i>
+                  <i class="fa fa-star text-secondary"></i>
+                  <i class="fa fa-star text-secondary"></i>
+                  <i class="fa fa-star text-secondary"></i>
+                  <i class="fa fa-star"></i>
                 </div>
-                <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.certification}}</p>
-                  </div>
+                <div class="d-flex mb-2">
+                  <h5 class="fw-bold me-2">2.99 $</h5>
+                  <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
                 </div>
               </div>
-
-              <!-- Accordion item 2 -->
-              <div class="card">
-                <div id="headingTwo" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseTwo"
-                      aria-expanded="false" aria-controls="collapseTwo"
-                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Xuất
-                      xứ</a></h6>
-                </div>
-                <div id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.origin}}</p>
-                  </div>
-                </div>
+            </div>
+            <div class="d-flex justify-content-center my-4">
+              <a href="#" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew More</a>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="position-relative">
+              <img src="{% static 'image/img/banner-fruits.jpg'%}" class="img-fluid w-100 rounded" alt="">
+              <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
+                <h3 class="text-secondary fw-bold">Thuần <br> Hữu <br> Cơ</h3>
               </div>
-
-              <!-- Accordion item 3 -->
-              <div class="card">
-                <div id="headingThree" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseThree"
-                      aria-expanded="false" aria-controls="collapseThree"
-                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Công
-                      dụng</a></h6>
-                </div>
-                <div id="collapseThree" aria-labelledby="headingThree" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.uses}}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accordion item 4 -->
-              <div class="card">
-                <div id="headingFour" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseFour"
-                      aria-expanded="false" aria-controls="collapseFour"
-                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hướng
-                      dẫn sử dụng</a></h6>
-                </div>
-                <div id="collapseFour" aria-labelledby="headingFour" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.instructions_for_use}}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accordion item 5 -->
-              <div class="card">
-                <div id="headingFive" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseFive"
-                      aria-expanded="false" aria-controls="collapseFive"
-                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hướng
-                      dẫn bảo quản</a></h6>
-                </div>
-                <div id="collapseFive" aria-labelledby="headingFive" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.preserving_instruction}}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accordion item 6 -->
-              <div class="card">
-                <div id="headingSix" class="card-header bg-white shadow-sm border-0">
-                  <h6 class="mb-0 font-weight-bold"><a href="#" data-toggle="collapse" data-target="#collapseSix"
-                      aria-expanded="false" aria-controls="collapseSix"
-                      class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Hạn sử
-                      dụng</a></h6>
-                </div>
-                <div id="collapseSix" aria-labelledby="headingSix" data-parent="#accordionExample" class="collapse">
-                  <div class="card-body p-5">
-                    <p class="font-weight-light m-0">{{description.expiry}}</p>
-                  </div>
-                </div>
-              </div>
-
-
-
-
-
             </div>
           </div>
         </div>
       </div>
-
-      <hr />
-
-      <div class="row mb-4 ">
-        <!-- col.// -->
-        <div class="col-md-4 col-6 mb-3 ">
-          <label class="mb-2 d-block">Số lượng</label>
-          <div class="input-group mb-3" style="width: 170px;">
-            {% csrf_token %}
-            <input type="hidden" value="{{ product.id }}" id="prod_id">
-            <button class="btn btn-white border border-secondary px-3 decrement-btn" type="button" id="decrement-btn"
-              data-mdb-ripple-color="dark">
-              <i class="fa-solid fa-minus"></i>
-            </button>
-            <input type="text" class="form-control text-center border border-secondary" id="qty-input" value="1">
-            <button class="btn btn-white border border-secondary px-3 increment-btn" type="button" id="increment-btn"
-              data-mdb-ripple-color="dark">
-              <i class="fa-solid fa-plus"></i>
-            </button>
+    </div>
+    <h1 class="fw-bold mb-0">Sản phẩm tương tự</h1>
+    <div class="vesitable">
+      <div class="owl-carousel vegetable-carousel justify-content-center">
+        {% for rlt_product in related_products %}
+        <div class="border border-primary rounded position-relative vesitable-item">
+          <div class="vesitable-img" style="height: 20vw;">
+            <img src="{{rlt_product.image.url}}" class="img-fluid w-100 rounded-top" alt="" style="width: 100%; height: auto; object-fit: fill;">
           </div>
-          <label class="text-muted">{{ product.stock }} sản phẩm có sẵn</label>
+          <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">
+            {{rlt_product.category.name}}</div>
+          <div class="p-4 pb-0 rounded-bottom">
+            <h4 class="product-name" title="{{product.name}}">{{rlt_product.name}}</h4>
+            <div class="d-flex justify-content-between flex-lg-wrap">
+              <p class="text-dark fs-5 fw-bold">{{product.sell_price|currency}}</p>
+              <a href="{% url 'product_detail' rlt_product.category.slug rlt_product.slug %}" class="btn border border-secondary rounded-pill px-3 py-1 mb-4 text-primary"><i
+                  class="fa fa-shopping-bag me-2 text-primary"></i> Xem chi tiết</a>
+            </div>
+          </div>
         </div>
-      </div>
-      {% if user.is_authenticated %}
-      <a class="btn btn-primary shadow-0" id="addToCart-btn"> <i class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ
-      </a>
-      {% else %}
-      <button onclick="location.href='{% url 'login' %}'" class="btn btn-primary shadow-0"> <i
-          class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ
-      </button>
-      {% endif %}
-    </div>
-
-
-
-  </div>
-  <br>
-  <hr>
-  <header class="section-heading">
-    <h2>Đánh giá về sản phẩm</h2>
-  </header>
-  <br>
-
-</div>
-</div>
-{% for review in reviews %}
-<div class="container">
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-
-        <div class="col-md-12">
-          <p>
-            <p class="date text-muted float-md-right">{{ review.updated_at|localtime|order_date }}</p>
-            <h5><strong>{{ review.user.name }}</strong></h5>
-            
-          </p>
-          <p>
-            <span class="float-left">{% if review.rating >= 1 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
-            <span class="float-left">{% if review.rating >= 2 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
-            <span class="float-left">{% if review.rating >= 3 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
-            <span class="float-left">{% if review.rating >= 4 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
-            <span class="float-left">{% if review.rating >= 5 %}<i class="text-warning fa fa-star"></i>{% endif %}</span>
-          </p>
-          <br>
-          <p>
-            <h6 class="float-left" href="#"><strong>{{ review.subject }}</strong></h6>
-            
-          </p>
-          
-          <div class="clearfix"></div>
-          <p>{{ review.review }}</p>
-
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </div>
-{% endfor %}
-
-
-
-
-
-
-
-
-
+<!-- Single Product End -->
 {% endblock content %}
-
-{% block javascript %}
-<script type="text/javascript">
-  $(document).ready(function () {
-    $('#increment-btn').click(function (e) {
-      e.preventDefault();
-
-      var inc_value = $(this).closest('.product_data').find('#qty-input').val();
-      var value = parseInt(inc_value, 10);
-      value = isNaN(value) ? 0 : value;
-      if (value < '{{product.stock}}') {
-        value++;
-        $(this).closest('.product_data').find('#qty-input').val(value);
-      }
-    });
-
-    $('#decrement-btn').click(function (e) {
-      e.preventDefault();
-
-      var dec_value = $(this).closest('.product_data').find('#qty-input').val();
-      var value = parseInt(dec_value, 10);
-      value = isNaN(value) ? 0 : value;
-      if (value > 1) {
-        value--;
-        $(this).closest('.product_data').find('#qty-input').val(value);
-      }
-    });
-
-    $('#addToCart-btn').click(function (e) {
-      e.preventDefault();
-
-      var product_id = $(this).closest('.product_data').find('#prod_id').val();
-      var product_qty = $(this).closest('.product_data').find('#qty-input').val();
-      var token = $('input[name=csrfmiddlewaretoken]').val();
-
-      $.ajax({
-        method: 'POST',
-        url: "{% url 'cart' %}",
-        data: {
-          'product_id': product_id,
-          'product_qty': product_qty,
-          'add-to-cart': 1,
-          csrfmiddlewaretoken: token
-        },
-        success: function (response) {
-          console.log(response.status);
-          alertify.success(response.status);
-        },
-        error: function () {
-          alertify.error('Có lỗi xảy ra!')
-        }
-      })
-    });
-
-  });
-
-
-</script>
-{% endblock javascript %}
